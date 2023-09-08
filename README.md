@@ -30,4 +30,13 @@ Conexión a la DB y esquemas para las clases y como cambian sus datos en la db
 van las rutas y las carpetas de las clases asociadas a las rutas
 
 
+
+#### ES UN ORM NUESTRO SOFTWARE
+
+
+### DB _ 
+pip install SQLAlchemy
+
+
+
 https://kb.rolosa.com/estructura-apirouter-con-fastapi-de-python/
