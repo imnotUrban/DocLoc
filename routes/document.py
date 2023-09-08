@@ -8,10 +8,12 @@ from schemas.document import Document
 
 document = APIRouter()
 
+#TODO: Aún no devuelve los documentos pq hay que transformalo a json a mano, pero no lo necesitamos en todo caso asi que se puede borrar esta ruta pq solo usamos una ruta jijijjiji
 @document.get("/documents")
 def get_documents():
     results =conn.execute(documents.select()).fetchall()
-    return results
+    print(results)
+    return "results_dict"
 
 
 @document.post("/addDocuments")
@@ -21,4 +23,4 @@ def create_documents(document: Document):
     conn.commit()
     print(result)
     
-    return "ola"
+    return result
