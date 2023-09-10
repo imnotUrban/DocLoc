@@ -1,6 +1,6 @@
 # DocLoc
 
-
+### OJO QUE EL PYTHON DEBE SER VERSIÖN 3.10 o más
 
 #### pasos de instalación fast api - uvicorn
 
@@ -15,7 +15,7 @@ uvicorn main:app --reload
 
 si no les funciona, usar:
 
-python -m uvicorn main:app --reload
+python -m uvicorn app:app --reload
 
 
 ### Carpetas
