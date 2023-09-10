@@ -12,15 +12,6 @@ load_dotenv(dotenv_path="../.env")
 key = os.getenv("API_GEOCODING")
 gmaps = googlemaps.Client(key=key)
 
-# with open(file="./in.json", mode="r") as file:
-#     inputJson = json.load(file)
-    
-# with open(file="./out.json", mode="r") as file:
-#     outputJson = json.load(file)
-
-# with open(file="./empty.json", mode="r") as file:
-#     emptyJson = json.load(file)
-
 class Geocoding:
     locations = []
     coordinates = []
@@ -28,40 +19,46 @@ class Geocoding:
     def __init__(self):
         return
     
-    # Esto no deberia hacerlo geocoding  
-    def checkInCache(self, location: str) -> bool:
-        if conn.execute(geocache_table
-                     .select()
-                     .where(geocache_table.c.location == location)):
-            return True
-        else:
-            return False
-        
+    # Obtener SOLO las location entrantes para obtener: (lat, lng)
     def getLocations(self, documents) -> list:
         for document in documents:
           self.locations.append(document["location"])
         return self.locations
     
-    def getCoordinates(self, documents) -> list:
+    # Comprobar si una location esta en cache y retornar la primera
+    # TODO: definir el tamaño máximo de la cache
+    def checkInCache(self, location: str) -> json:
+        row = conn.execute(geocache_table.select().where(geocache_table.c.location == location)).fetchone()
+        if row:
+            locationMatch = [{ "location_id": row[0],"location":row[1], "lat":row[2], "lng": row[3]}]
+            return locationMatch
+        else:
+            return []
+    
+    # Obtiene lat y lng del documento entrante. # TODO:(máx 10)
+    def getCoordinates(self, documents) -> json:
         self.getLocations(documents)
         for place in self.locations:
-            geocode_result = gmaps.geocode(place)
-            coordinate = { 
-                          "date": str(datetime.today), # Tiempo de actualizacion
-                          "location": place,
-                          "lat": geocode_result[0]["geometry"]["location"]["lat"],
-                          "long": geocode_result[0]["geometry"]["location"]["lng"],
-                        }
-            self.coordinates.append(coordinate)
+            locationMatch = self.checkInCache(place)
+            if (len(locationMatch) == 0):
+                geocode_result = gmaps.geocode(place)
+                coordinate = { 
+                            "date": str(datetime.now()), # Tiempo de actualizacion
+                            "location": place,
+                            "lat": geocode_result[0]["geometry"]["location"]["lat"],
+                            "long": geocode_result[0]["geometry"]["location"]["lng"],
+                            }
+                self.coordinates.append(coordinate)
+            else:
+                coordinate = { 
+                            "date": str(datetime.now()), # Tiempo de actualizacion
+                            "location": locationMatch[0]["location"],
+                            "lat": locationMatch[0]["lat"],
+                            "long": locationMatch[0]["lng"],
+                            }
+                self.coordinates.append(coordinate)
         return self.coordinates
-    
-    ##TODO: Actualizar tabla documents 
-    # Esto no deberia hacerlo geocoding...
-    # def updateDocuments(self):
-    #     conn.execute(documents
-    #                  .update()
-    #                  .where(documents.c.id == ).)
-
+        
 # print(outputJson[0]["place_id"]) # Obtener más detalles del lugar o (empresa)  
 # print(outputJson[0]["geometry"]["location"]) # lat y long de la geoloc
 # print(outputJson[0]["geometry"]["location_type"]) # Precision de la geoloc, 4 tipos. ROOFTOP, el mejor.

@@ -2,17 +2,28 @@ from fastapi import APIRouter
 from schemas.geocache import CacheDocument
 from google.geocoding import Geocoding
 
+import json
+
 # Estas rutas son solo para pruebas.
-# Borrar cuando salga a prod
+# Borrar cuando salga a produccion
 
 cache = APIRouter()
+
+with open(file="google/in.json", mode="r") as file:
+    inputJson = json.load(file)
+
+with open(file="google/out.json", mode="r") as file:
+    outputJson = json.load(file)
+
+with open(file="google/empty.json", mode="r") as file:
+    emptyJson = json.load(file)
 
 @cache.post("/addcache")
 def createCacheDocument(document: CacheDocument):
     document.saveCache()
-    return "ok"
+    return {"msg": "Añadido correctamente"}
 
 @cache.get("/checkcache")
 def checkCacheItems(location: str):
-    Geocoding().checkInCache(location)
-    return "ok"
+    result = Geocoding().getCoordinates(inputJson["data"])
+    return result

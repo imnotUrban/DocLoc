@@ -1,4 +1,6 @@
-[
+{
+  "data": 
+  [
     {
       "location": "New York",
       "summary": "A vibrant city"
@@ -10,5 +12,18 @@
     {
       "location": "San Francisco",
       "summary": "Tech hub by the bay"
+    },
+    {
+      "location": "Lima",
+      "summary": "Tech hub by the bay"
+    },
+    {
+      "location": "Valdivia",
+      "summary": "Tech hub by the bay"
+    },
+    {
+      "location": "Coyhaique",
+      "summary": "Tech hub by the bay"
     }
   ]
+}
