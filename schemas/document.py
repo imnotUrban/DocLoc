@@ -5,20 +5,19 @@ from models.document import documents
 
 
 class Document(BaseModel):
-    id: Optional[int]
+    id: int | None = None
     title: str
     text: str
     date: str
     url: str
-    state: int
-    result: Optional[str]
-    lat: Optional[str]
-    long: Optional[str]
+    state: int | None = None 
+    result: str | None = None
+    lat: str | None = None 
+    long: str | None = None
     
     def validateField(self):
         ##TODO: Aca debe validar que lo que se ingresó efectivamente es del tipo que se pide, además de ciertas cosas que hay que revisar
         return "xd"
-    
     
     #Guarda el documento en la base de datos
     def saveDocin(self):

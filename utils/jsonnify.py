@@ -1,7 +1,6 @@
 # Transforma la lista, en un json 
 import json
 
-
 def transform_to_json(data_list):
     # Lista para almacenar los objetos JSON
     json_data = []

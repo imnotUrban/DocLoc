@@ -1,109 +1,67 @@
-import googlemaps
-from datetime import datetime
-
-from dotenv import load_dotenv
 import os
+from datetime import datetime
+from config.db import conn
+from models.geocache import geocache_table
+from models.document import documents
+
 import json
+from dotenv import load_dotenv
+import googlemaps
 
-text = '''[
-  {
-    "location": "New York",
-    "summary": "A vibrant city"
-  },
-  {
-    "location": "Los Angeles",
-    "summary": "City of Angels"
-  },
-  {
-    "location": "San Francisco",
-    "summary": "Tech hub by the bay"
-  }
-]
-'''
-# JSON de juguete
-data = json.loads(text)
-
-load_dotenv(dotenv_path=".env")
+load_dotenv(dotenv_path="../.env")
 key = os.getenv("API_GEOCODING")
 gmaps = googlemaps.Client(key=key)
+
+# with open(file="./in.json", mode="r") as file:
+#     inputJson = json.load(file)
+    
+# with open(file="./out.json", mode="r") as file:
+#     outputJson = json.load(file)
+
+# with open(file="./empty.json", mode="r") as file:
+#     emptyJson = json.load(file)
 
 class Geocoding:
     locations = []
     coordinates = []
+    
     def __init__(self):
         return
-
-    def getLocations(self, documents):
+    
+    # Esto no deberia hacerlo geocoding  
+    def checkInCache(self, location: str) -> bool:
+        if conn.execute(geocache_table
+                     .select()
+                     .where(geocache_table.c.location == location)):
+            return True
+        else:
+            return False
+        
+    def getLocations(self, documents) -> list:
         for document in documents:
-            self.locations.append(document["location"])
+          self.locations.append(document["location"])
         return self.locations
     
-    def getCoordinates(self,documents):
+    def getCoordinates(self, documents) -> list:
         self.getLocations(documents)
         for place in self.locations:
             geocode_result = gmaps.geocode(place)
             coordinate = { 
-                        "location": place,
-                        "lat": geocode_result[0]["geometry"]["location"]["lat"],
-                        "long": geocode_result[0]["geometry"]["location"]["lng"],
-                        "summary": []
+                          "date": str(datetime.today), # Tiempo de actualizacion
+                          "location": place,
+                          "lat": geocode_result[0]["geometry"]["location"]["lat"],
+                          "long": geocode_result[0]["geometry"]["location"]["lng"],
                         }
             self.coordinates.append(coordinate)
         return self.coordinates
+    
+    ##TODO: Actualizar tabla documents 
+    # Esto no deberia hacerlo geocoding...
+    # def updateDocuments(self):
+    #     conn.execute(documents
+    #                  .update()
+    #                  .where(documents.c.id == ).)
 
-geo = Geocoding().getCoordinates(data)
-print(geo)
-
-# geocode_result = json.loads('''[{
-#     "address_components": 
-#     [
-#         {"long_name": "Google Building 40", "short_name": "Google Building 40", "types": ["premise"]}, 
-#         {"long_name": "1600", "short_name": "1600", "types": ["street_number"]}, 
-#         {"long_name": "Amphitheatre Parkway", "short_name": "Amphitheatre Pkwy", "types": ["route"]}, 
-#         {"long_name": "Mountain View", "short_name": "Mountain View", "types": ["locality", "political"]}, 
-#         {"long_name": "Santa Clara County", "short_name": "Santa Clara County", "types": ["administrative_area_level_2", "political"]}, 
-#         {"long_name": "California", "short_name": "CA", "types": ["administrative_area_level_1", "political"]}, 
-#         {"long_name": "United States", "short_name": "US", "types": ["country", "political"]}, 
-#         {"long_name": "94043", "short_name": "94043", "types": ["postal_code"]}
-#     ], 
-#     "formatted_address": "Google Building 40, 1600 Amphitheatre Pkwy, Mountain View, CA 94043, USA", 
-#     "geometry":
-#     {
-#         "bounds":
-#         {
-#             "northeast":
-#             {
-#                     "lat": 37.4226618, "lng": -122.0829302
-#             }, 
-#             "southwest": 
-#             {
-#                 "lat": 37.4220699, "lng": -122.084958
-#             }
-#         }, 
-#         "location": 
-#             {
-#                 "lat": 37.4223878, "lng": -122.0841877
-#             }, 
-#         "location_type": "ROOFTOP", 
-#         "viewport": 
-#             {
-#                 "northeast": 
-#                 {
-#                     "lat": 37.42372298029149, 
-#                     "lng": -122.0825951197085
-#                 }, 
-#                 "southwest": 
-#                 {
-#                     "lat": 37.4210250197085, 
-#                     "lng": -122.0852930802915
-#                 }
-#             }
-#         },
-#         "place_id": "ChIJj38IfwK6j4ARNcyPDnEGa9g", 
-#         "types": ["premise"]
-#     }
-# ]''')
-
-# print(geocode_result[0]["place_id"]) # Obtener más detalles del lugar o (empresa)  
-# print(geocode_result[0]["geometry"]["location"]) # lat y long de la geoloc
-# print(geocode_result[0]["geometry"]["location_type"]) # Precision de la geoloc, 4 tipos. ROOFTOP, el mejor.
+# print(outputJson[0]["place_id"]) # Obtener más detalles del lugar o (empresa)  
+# print(outputJson[0]["geometry"]["location"]) # lat y long de la geoloc
+# print(outputJson[0]["geometry"]["location_type"]) # Precision de la geoloc, 4 tipos. ROOFTOP, el mejor.
