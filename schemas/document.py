@@ -2,7 +2,6 @@ from pydantic import BaseModel
 from config.db import conn
 from models.document import documents
 
-
 class Document(BaseModel):
     id: int | None = None
     title: str
@@ -13,17 +12,11 @@ class Document(BaseModel):
     result: str | None = None
     lat: str | None = None 
     long: str | None = None
-<<<<<<< HEAD
     
     def validateField(self):
         ##TODO: Aca debe validar que lo que se ingresó efectivamente es del tipo que se pide, además de ciertas cosas que hay que revisar
         return "xd"
-    
-=======
-    
 
-    
->>>>>>> origin/dev
     #Guarda el documento en la base de datos
     def saveDocin(self):
         try:

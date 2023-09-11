@@ -30,7 +30,7 @@ class Geocoding:
     def checkInCache(self, location: str) -> json:
         row = conn.execute(geocache_table.select().where(geocache_table.c.location == location)).fetchone()
         if row:
-            locationMatch = [{ "location_id": row[0],"location":row[1], "lat":row[2], "lng": row[3]}]
+            locationMatch = [{ "location_id": row[0],"location": row[1], "lat":row[2], "lng": row[3]}]
             return locationMatch
         else:
             return []
@@ -51,7 +51,7 @@ class Geocoding:
                 self.coordinates.append(coordinate)
             else:
                 coordinate = { 
-                                "date": str(datetime.now()), # Tiempo de actualizacion
+                                "date": str(datetime.now()),
                                 "location": locationMatch[0]["location"],
                                 "lat": locationMatch[0]["lat"],
                                 "long": locationMatch[0]["lng"]
