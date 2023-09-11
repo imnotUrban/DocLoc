@@ -68,3 +68,11 @@ docker build -t docloc .
 
 ## correr imagen
 docker run -p 5001:5001 docloc
+
+
+
+
+
+## Imagen mysql
+
+docker run -d --rm --name mysqlDocLoc -e MYSQL_ROOT_PASSWORD=5123123123 -p 3308:3308 mariadb
