@@ -15,9 +15,11 @@ document = APIRouter()
 
 @document.post("/addDocuments")
 async def create_documents(document: List[Document]):
+    xd = []
     try:
         for doc in document:
             doc.saveDocin()
+            xd.append(doc)
             print(doc.id)
             
             ##TODO CHATGPT
