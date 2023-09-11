@@ -40,3 +40,31 @@ pip install SQLAlchemy
 
 
 https://kb.rolosa.com/estructura-apirouter-con-fastapi-de-python/
+
+
+
+[
+  {
+    "title": "string",
+    "text": "string",
+    "date": "string",
+    "url": "string"
+  },
+{
+    "title": "string",
+    "text": "string",
+    "date": "string",
+    "url": "string"
+
+  }
+]
+
+
+
+
+### Construir imagen docker
+
+docker build -t docloc .
+
+## correr imagen
+docker run -p 5001:5001 docloc
