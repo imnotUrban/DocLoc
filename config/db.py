@@ -9,6 +9,7 @@ db_port = os.getenv("DB_PORT")
 db_host = os.getenv("DB_HOST")
 db_pass = os.getenv("DB_PASS")
 db_name = os.getenv("DB_NAME")
-engine = create_engine(f"mariadb+pymysql://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}")
+
+engine = create_engine(f"mariadb+pymysql://test:1234@127.0.0.1:3308/storedb")
 meta = MetaData()
 conn = engine.connect()

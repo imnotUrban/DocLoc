@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  mariadb-service:
+    image: mariadb:latest
+    container_name: mariadb-container
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: storedb
+      MYSQL_USER: test
+      MYSQL_PASSWORD: 1234
+    # Puedes comentar el siguiente bloque si no necesitas scripts SQL de inicialización.
+    volumes:
+      - ./sql-scripts:/docker-entrypoint-initdb.d/
+    ports:
+      - "3308:3308"

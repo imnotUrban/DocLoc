@@ -13,8 +13,8 @@ key = os.getenv("API_GEOCODING")
 gmaps = googlemaps.Client(key=key)
 
 class Geocoding:
-    locations = []
-    coordinates = []
+    locations = [] # list
+    coordinates = [] # json
     
     def __init__(self):
         return
@@ -43,22 +43,19 @@ class Geocoding:
             if (len(locationMatch) == 0):
                 geocode_result = gmaps.geocode(place)
                 coordinate = { 
-                            "date": str(datetime.now()), # Tiempo de actualizacion
-                            "location": place,
-                            "lat": geocode_result[0]["geometry"]["location"]["lat"],
-                            "long": geocode_result[0]["geometry"]["location"]["lng"],
+                                "date": str(datetime.now()), # Tiempo de actualizacion
+                                "location": place,
+                                "lat": geocode_result[0]["geometry"]["location"]["lat"],
+                                "long": geocode_result[0]["geometry"]["location"]["lng"]
                             }
                 self.coordinates.append(coordinate)
             else:
                 coordinate = { 
-                            "date": str(datetime.now()), # Tiempo de actualizacion
-                            "location": locationMatch[0]["location"],
-                            "lat": locationMatch[0]["lat"],
-                            "long": locationMatch[0]["lng"],
+                                "date": str(datetime.now()), # Tiempo de actualizacion
+                                "location": locationMatch[0]["location"],
+                                "lat": locationMatch[0]["lat"],
+                                "long": locationMatch[0]["lng"]
                             }
                 self.coordinates.append(coordinate)
         return self.coordinates
         
-# print(outputJson[0]["place_id"]) # Obtener más detalles del lugar o (empresa)  
-# print(outputJson[0]["geometry"]["location"]) # lat y long de la geoloc
-# print(outputJson[0]["geometry"]["location_type"]) # Precision de la geoloc, 4 tipos. ROOFTOP, el mejor.
