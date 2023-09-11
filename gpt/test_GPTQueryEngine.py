@@ -13,3 +13,5 @@ print("Random Index:",random_index)
 query_engine = GPTQueryEngine()
 result = query_engine.query(new)
 print(result)
+for item in result['data']:
+    print(item['location'])
