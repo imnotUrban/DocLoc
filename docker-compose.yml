@@ -10,7 +10,7 @@ services:
       MYSQL_USER: test
       MYSQL_PASSWORD: 1234
     # Puedes comentar el siguiente bloque si no necesitas scripts SQL de inicialización.
-    volumes:
-      - ./sql-scripts:/docker-entrypoint-initdb.d/
+    # volumes:
+    #   - ./sql-scripts:/docker-entrypoint-initdb.d/
     ports:
       - "3308:3308"
