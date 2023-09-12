@@ -2,6 +2,8 @@ from fastapi import APIRouter  #Define subrutas o rutas por separado
 
 from typing import List
 
+from gpt.GPTQueryEngine import GPTQueryEngine
+
 from config.db import conn
 
 from models.document import documents
@@ -15,6 +17,7 @@ document = APIRouter()
 
 @document.post("/addDocuments")
 async def create_documents(document: List[Document]):
+    queryEngine = GPTQueryEngine()
     xd = []
     try:
         for doc in document:
@@ -23,7 +26,9 @@ async def create_documents(document: List[Document]):
             print(doc.id)
             
             ##TODO CHATGPT
-            
+            GPTResult = queryEngine.query(doc.text);
+            for item in GPTResult['data']:
+                print(item['location'])
             ##TODO GEOCODING
             
             ##TODO DEVOLVER LOS DOCUMENTOS PROCESADOS
