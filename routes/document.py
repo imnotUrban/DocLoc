@@ -27,7 +27,6 @@ async def create_documents(document: List[Document]):
             
             ##TODO GEOCODING
             geoResult = geoloc.getCoordinates(GPTResult["data"])
-
             ##TODO DEVOLVER LOS DOCUMENTOS PROCESADOS
             
         return {"message" : "Documentos procesados correctamente"} #Se espera que, al integrar todos los ... de la api, devuelva un json con los documetntos procesados

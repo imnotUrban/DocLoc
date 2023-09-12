@@ -19,9 +19,8 @@ class Geocoding:
     def __init__(self):
         return
     
-    
     # Comprobar si una location esta en cache y retornar la primera
-    # TODO: definir el tamaño máximo de la cache, mover a otro modulo
+    # TODO: #4 Definir el tamaño máximo de la cache, mover a otro modulo
     def checkInCache(self, location: str) -> json:
         row = conn.execute(geocache_table.select().where(geocache_table.c.location == location)).fetchone()
         if row:
@@ -30,9 +29,16 @@ class Geocoding:
         else:
             return []
         
-    # mover a otro modulo
-    def saveInCache(location: json):
-        conn.execute(geocache_table.insert().values(location))
+    #TODO #3 Mover a otro modulo
+    def saveInCache(cacheDocument: json):
+        conn.execute(geocache_table
+                     .insert()
+                     .values({
+                        "location": cacheDocument["location"],
+                        "lat": cacheDocument["lat"],
+                        "long": cacheDocument["lng"]
+                        })
+                    )
         conn.commit()
         return {"msg": "documento guardado en cache con exito"}
     
@@ -56,6 +62,7 @@ class Geocoding:
                                 "long": geocode_result[0]["geometry"]["location"]["lng"]
                             }
                 self.coordinates.append(coordinate)
+                # self.saveInCache(coordinate)
             else:
                 coordinate = { 
                                 "date": str(datetime.now()),
@@ -64,6 +71,5 @@ class Geocoding:
                                 "long": locationMatch[0]["lng"]
                             }
                 self.coordinates.append(coordinate)
-                self.saveInCache(coordinate)
         return self.coordinates
         

@@ -11,6 +11,7 @@ class GPTQueryEngine:
     def __makePrompt(self,new: str) -> any:
         return f"""{new}"""
     def __getSystem(self):
+        #TODO #2 pasar a archivo de config
         return '''
 A location is a term that is spatial, geographic, real-world, either natural or man-made, addressable, cartographic, navigable, observable, and existing in the tangible physical realm.
 Specify what a location is NOT by excluding the terms temporal, non-terrestrial, non-spatial, individuals, companies, organizations, and fictional locations.
