@@ -1,0 +1,24 @@
+version: '3'
+
+services:
+  api-service:
+    image: python:3.11
+    command: sh -c "pip install -r requirements.txt && uvicorn main:app --host 0.0.0.0 --port 5001 --reload"
+    container_name: api-container
+    working_dir: /app
+    volumes:
+      - ./:/app
+    depends_on:
+      - mariadb-service
+    ports:
+      - 5001:5001
+
+  mariadb-service:
+    image: mariadb:latest
+    container_name: mariadb-container
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: storedb
+      MYSQL_USER: root
+    ports:
+      - 3308:3306
