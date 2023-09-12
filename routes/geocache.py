@@ -26,5 +26,5 @@ def createCacheDocument(document: CacheDocument):
 
 @cache.get("/checkcache")
 def checkCacheItems(location: str):
-    result = Geocoding().getCoordinates(inputJson["data"])
-    return result
+    # result = Geocoding().getCoordinates(inputJson["data"])
+    return 0
