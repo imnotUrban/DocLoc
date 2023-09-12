@@ -72,7 +72,9 @@ Remember locations represent real places or regions.
         try:
             generated_text = completion.choices[0].message.function_call.arguments
             print(completion.usage.prompt_tokens,completion.usage.completion_tokens,completion.usage.total_tokens)
-            return json.loads(generated_text)
+            result = json.loads(generated_text)
+            result["usage"] = completion.usage
+            return result
         except Exception as e:
             print(f"An error occurred: {e}")
             return None

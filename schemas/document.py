@@ -13,10 +13,6 @@ class Document(BaseModel):
     lat: str | None = None 
     long: str | None = None
     
-    def validateField(self):
-        ##TODO: Aca debe validar que lo que se ingresó efectivamente es del tipo que se pide, además de ciertas cosas que hay que revisar
-        return "xd"
-
     #Guarda el documento en la base de datos
     def saveDocin(self):
         try:
@@ -27,6 +23,37 @@ class Document(BaseModel):
             print("Agregado correctamente")
         except Exception:
             raise Exception("No se ha podido crear el objeto documento")
+    
+    def updateDocState(self, docState : int):
+        try:
+        # Supongamos que tienes una variable self.id que contiene el ID del documento que deseas actualizar
+            conn.execute(documents.update().where(documents.c.id == self.id).values(state=docState))
+            conn.commit()
+            print("Estado actualizado correctamente")
+        except Exception as e:
+            raise Exception(f"No se ha podido actualizar el estado del documento: {str(e)}")
+
+    def updateDocResult(self, docResult : str):  
+        try:
+        # Supongamos que tienes una variable self.id que contiene el ID del documento que deseas actualizar
+            conn.execute(documents.update().where(documents.c.id == self.id).values(result=docResult))
+            conn.commit()
+            print("Resultado del documento actualizado correctamente")
+        except Exception as e:
+            raise Exception(f"No se ha podido actualizar el resultado del documento: {str(e)}")
+
+    def updateDocLatLong(self, docLat : str, docLong: str):  
+        try:
+        # Supongamos que tienes una variable self.id que contiene el ID del documento que deseas actualizar
+            conn.execute(documents.update().where(documents.c.id == self.id).values(lat=docLat))
+            conn.commit()
+            print("Latitud del documento actualizado correctamente")
+            conn.execute(documents.update().where(documents.c.id == self.id).values(long=docLong))
+            conn.commit()
+            print("Longitud del documento actualizado correctamente")
+        except Exception as e:
+            raise Exception(f"No se ha podido actualizar la Latitud o longitud del documento: {str(e)}")
+
     
 class Config:
     orm_mode = True

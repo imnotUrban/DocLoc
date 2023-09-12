@@ -25,8 +25,15 @@ async def create_documents(document: List[Document]):
             # for item in GPTResult['data']:
             #     print(item['location'])
             
+            # Actualiza el estado del documento a 1 (Que ha sido procesado por CHATGPT)
+            doc.updateDocState(1)
+
             ##TODO GEOCODING
             geoResult = geoloc.getCoordinates(GPTResult["data"])
+            
+            # Actualiza el estado del documento a 2 (Que ha sido procesado por la API de google)
+            doc.updateDocState(2)
+
             ##TODO DEVOLVER LOS DOCUMENTOS PROCESADOS
             
         return {"message" : "Documentos procesados correctamente"} #Se espera que, al integrar todos los ... de la api, devuelva un json con los documetntos procesados
