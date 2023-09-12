@@ -13,7 +13,7 @@ db_host = os.getenv("DB_HOST_LOCAL")
 
 db_container = os.getenv("DB_HOST_DOCKER")
 
-engine = create_engine(f"mariadb+pymysql://{db_user}:{db_pass}@{db_container}/{db_name}") # Para docker
-# engine = create_engine(f"mariadb+pymysql://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}") # Para local
+# engine = create_engine(f"mariadb+pymysql://{db_user}:{db_pass}@{db_container}/{db_name}") # Para docker
+engine = create_engine(f"mariadb+pymysql://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}") # Para local
 meta = MetaData()
 conn = engine.connect()

@@ -1,44 +1,38 @@
 from fastapi import APIRouter  #Define subrutas o rutas por separado
-
 from typing import List
-
 from gpt.GPTQueryEngine import GPTQueryEngine
-
+from google.geocoding import Geocoding
 from config.db import conn
-
 from models.document import documents
-
 from schemas.document import Document
-
 from utils.jsonnify import transform_to_json
 
 document = APIRouter()
 
-
 @document.post("/addDocuments")
 async def create_documents(document: List[Document]):
     queryEngine = GPTQueryEngine()
+    geoloc = Geocoding()
     xd = []
     try:
         for doc in document:
             doc.saveDocin()
             xd.append(doc)
-            print(doc.id)
+            # print(doc.id)
             
             ##TODO CHATGPT
-            GPTResult = queryEngine.query(doc.text);
-            for item in GPTResult['data']:
-                print(item['location'])
-            ##TODO GEOCODING
+            GPTResult = queryEngine.query(doc.text)
+            # for item in GPTResult['data']:
+            #     print(item['location'])
             
+            ##TODO GEOCODING
+            geoResult = geoloc.getCoordinates(GPTResult["data"])
+
             ##TODO DEVOLVER LOS DOCUMENTOS PROCESADOS
             
         return {"message" : "Documentos procesados correctamente"} #Se espera que, al integrar todos los ... de la api, devuelva un json con los documetntos procesados
     except Exception:
         return {"message" : "Ha habido un error al ingresar el documento, intente seguir el formato indicado en la documentación"}
-        
-
-
 
 # @document.post("/addDocuments")
 # async def create_documents(document: Document):
