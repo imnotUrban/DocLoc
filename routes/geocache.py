@@ -9,6 +9,8 @@ import json
 
 cache = APIRouter()
 
+geo = Geocoding()
+
 with open(file="google/in.json", mode="r") as file:
     inputJson = json.load(file)
 
@@ -19,12 +21,8 @@ with open(file="google/out.json", mode="r") as file:
 with open(file="google/empty.json", mode="r") as file:
     emptyJson = json.load(file)
 
+
 @cache.post("/addcache")
 def createCacheDocument(document: CacheDocument):
-    document.saveCache()
+    geo.getCoordinates(inputJson["data"])
     return {"msg": "Añadido correctamente"}
-
-@cache.get("/checkcache")
-def checkCacheItems(location: str):
-    # result = Geocoding().getCoordinates(inputJson["data"])
-    return 0
