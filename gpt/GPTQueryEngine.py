@@ -11,6 +11,7 @@ class GPTQueryEngine:
     def __makePrompt(self,new: str) -> any:
         return f"""{new}"""
     def __getSystem(self):
+        #TODO #2 pasar a archivo de config
         return '''
 A location is a term that is spatial, geographic, real-world, either natural or man-made, addressable, cartographic, navigable, observable, and existing in the tangible physical realm.
 Specify what a location is NOT by excluding the terms temporal, non-terrestrial, non-spatial, individuals, companies, organizations, and fictional locations.
@@ -71,7 +72,9 @@ Remember locations represent real places or regions.
         try:
             generated_text = completion.choices[0].message.function_call.arguments
             print(completion.usage.prompt_tokens,completion.usage.completion_tokens,completion.usage.total_tokens)
-            return json.loads(generated_text)
+            result = json.loads(generated_text)
+            result["usage"] = completion.usage
+            return result
         except Exception as e:
             print(f"An error occurred: {e}")
             return None
