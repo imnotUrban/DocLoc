@@ -6,39 +6,79 @@ from config.db import conn
 from models.document import documents
 from schemas.document import Document
 from utils.jsonnify import transform_to_json
+import pika
+import json
 
 document = APIRouter()
 
+# conexión RabbitMQ
+rabbitmqHost = 'localhost'  # lo de abajo tambien
+rabbitmqPort = 5672  # NOSE QUE PUERTO USAR asi que use el basico de rabbit xd
+
+connection = pika.BlockingConnection(pika.ConnectionParameters(host=rabbitmqHost, port=rabbitmqPort))
+channel = connection.channel()
+
+# la tan esperada cola
+channel.queue_declare(queue='document_processed')
+
+
+# Función para enviar un documento procesado a RabbitMQ
+def send_processed_document(doc):
+    processed_document = {
+        "id": doc.id,
+        "text": doc.text,
+        # solo use estos campos para testear
+    }
+    channel.basic_publish(exchange='', routing_key='document_processed', body=json.dumps(processed_document))
+
+# Ruta para procesar documentos y enviarlos a RabbitMQ
 @document.post("/addDocuments")
 async def create_documents(document: List[Document]):
     queryEngine = GPTQueryEngine()
     geoloc = Geocoding()
-    xd = []
     try:
         for doc in document:
             doc.saveDocin()
-            xd.append(doc)
-            # print(doc.id)
-            
-            ##TODO CHATGPT
+
+            # Procesa el documento con GPT
             GPTResult = queryEngine.query(doc.text)
-            # for item in GPTResult['data']:
-            #     print(item['location'])
-            
-            # Actualiza el estado del documento a 1 (Que ha sido procesado por CHATGPT)
             doc.updateDocState(1)
 
-            ##TODO GEOCODING
+            # Procesa el resultado de GPT para obtener coordenadas
             geoResult = geoloc.getCoordinates(GPTResult["data"])
-            
-            # Actualiza el estado del documento a 2 (Que ha sido procesado por la API de google)
             doc.updateDocState(2)
 
-            ##TODO DEVOLVER LOS DOCUMENTOS PROCESADOS
-            
-        return {"message" : "Documentos procesados correctamente"} #Se espera que, al integrar todos los ... de la api, devuelva un json con los documetntos procesados
+            # Envía el documento procesado a RabbitMQ
+            send_processed_document(doc)
+
+        return {"message": "Documentos procesados correctamente"}
     except Exception:
-        return {"message" : "Ha habido un error al ingresar el documento, intente seguir el formato indicado en la documentación"}
+        return {"message": "Ha habido un error al ingresar el documento, intente seguir el formato indicado en la documentación"}
+
+# consumidor testing de documentos
+def process_document_message(ch, method, properties, body):
+    try:
+        # Procesa el mensaje recibido de RabbitMQ
+        processed_document = json.loads(body)
+
+        print("Documento procesado:", processed_document)
+    except Exception as e:
+        print("Error al procesar el mensaje de RabbitMQ:", e)
+
+# CONSUMIDOR TESTING - no me funca los imports
+channel.basic_consume(queue='document_processed', on_message_callback=process_document_message, auto_ack=True)
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
+
+
+
+
+
+
+
+
 
 # @document.post("/addDocuments")
 # async def create_documents(document: Document):
