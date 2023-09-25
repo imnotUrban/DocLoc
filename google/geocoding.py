@@ -20,8 +20,8 @@ class Geocoding:
         return
     
     # Comprobar si una location esta en cache y retornar la primera
-    # TODO: Mover al schema CacheDocument
     # TODO: #4 Definir el tamaño máximo de la cache, mover a otro modulo. De otro modo cambiar nombre
+    # TODO: Mover al schema CacheDocument
     def checkInCache(self, location: str) -> json:
         row = conn.execute(geocache_table.select().where(geocache_table.c.location == location)).fetchone()
         if row:
@@ -54,7 +54,7 @@ class Geocoding:
                             }
                 self.coordinates.append(coordinate)
                 # Guardar en cache
-                CacheDocument(location_id = 10,
+                CacheDocument(location_id = 100000, # Sin este valor, se rompe. Define el limite de la cache también. Modificable
                               location = location, 
                               lat= lat, 
                               lng= lng).saveCache()
@@ -65,6 +65,6 @@ class Geocoding:
                                 "lat": locationMatch[0]["lat"],
                                 "long": locationMatch[0]["lng"]
                             }
-                self.coordinates.append(coordinate)
+                self.coordinates.append(coordinate) 
         return self.coordinates
         

@@ -17,11 +17,6 @@ with open(file="google/in.json", mode="r") as file:
 with open(file="google/out.json", mode="r") as file:
     outputJson = json.load(file)
 
-# Este no se porque lo hice xd
-with open(file="google/empty.json", mode="r") as file:
-    emptyJson = json.load(file)
-
-
 @cache.post("/addcache")
 def createCacheDocument(document: CacheDocument):
     geo.getCoordinates(inputJson["data"])

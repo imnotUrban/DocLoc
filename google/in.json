@@ -24,6 +24,18 @@
     {
       "location": "Coyhaique",
       "summary": "Tech hub by the bay"
+    },
+    {
+      "location": "buenos aires",
+      "summary": "Tech hub by the bay"
+    },
+    {
+      "location": "santiago",
+      "summary": "Tech hub by the bay"
+    },
+    {
+      "location": "kiev",
+      "summary": "Tech hub by the bay"
     }
   ]
 }
