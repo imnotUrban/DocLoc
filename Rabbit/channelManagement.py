@@ -10,6 +10,20 @@ import pika
 import json
 import threading
 
+#rabbitmqPort = 5672 # puerto default rabbit
+queryEngine = GPTQueryEngine()
+geoloc = Geocoding()
+
+def json_to_document(json_data):
+    return Document(
+        id=json_data["id"],
+        title=json_data["title"],
+        text=json_data["text"],
+        date=json_data["date"],
+        url=json_data["url"]
+    )
+
+
 def setupRabbitmq():
     def callback(ch, method, properties, body):
         print(f" Recibido '{body}'")
@@ -24,8 +38,20 @@ def setupRabbitmq():
 
         channel.queue_declare(queue='input')
 
+        def processInputChannel(ch, method, properties, body):
+            doc = Document(**json.loads(body))
+
+            GPTResult = queryEngine.query(doc.text)
+            doc.updateDocState(1)
+
+            channel.queue_declare(queue='middle')
+
+            channel.basic_publish(exchange='',
+                        routing_key='middle',
+                        body=GPTResult)
+
         channel.basic_consume(queue='input',
-                              on_message_callback=callback,
+                              on_message_callback=processInputChannel,
                               auto_ack=True)
         channel.start_consuming()
 

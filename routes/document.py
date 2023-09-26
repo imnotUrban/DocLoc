@@ -28,7 +28,7 @@ def send_processed_document(doc):
         "text": doc.text,
         # solo use estos campos para testear
     }
-    channel.basic_publish(exchange='', routing_key='output', body=json.dumps(ss))
+    channel.basic_publish(exchange='', routing_key='output', body=json.dumps(processed_document))
 
 # Ruta para procesar documentos y enviarlos a RabbitMQ
 @document.post("/addDocuments")
@@ -39,15 +39,13 @@ async def create_documents(document: List[Document]):
         for doc in document:
             doc.saveDocin()
 
+            message = doc.json()
+
             # Envia por el canal input el doc
             channel.basic_publish(exchange='',
                       routing_key='input',
-                      body=doc)
-            
-            # Procesa el documento con GPT
-            #GPTResult = queryEngine.query(channel)
-            doc.updateDocState(1)
-
+                      body=message)
+            print("publicado en canal")
             # Procesa el resultado de GPT para obtener coordenadas
             #geoResult = geoloc.getCoordinates(GPTResult["data"])
             #doc.updateDocState(2)
