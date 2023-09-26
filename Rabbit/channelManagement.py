@@ -12,7 +12,7 @@ import threading
 
 #rabbitmqPort = 5672 # puerto default rabbit
 queryEngine = GPTQueryEngine()
-geoloc = Geocoding()
+
 
 def json_to_document(json_data):
     return Document(
@@ -22,7 +22,6 @@ def json_to_document(json_data):
         date=json_data["date"],
         url=json_data["url"]
     )
-
 
 def setupRabbitmq():
     def callback(ch, method, properties, body):
@@ -46,9 +45,12 @@ def setupRabbitmq():
 
             channel.queue_declare(queue='middle')
 
+            message = json.dumps(GPTResult["data"])
+
             channel.basic_publish(exchange='',
                         routing_key='middle',
-                        body=GPTResult)
+                        body=message)
+            doc.updateDocState(2)
 
         channel.basic_consume(queue='input',
                               on_message_callback=processInputChannel,
@@ -65,8 +67,21 @@ def setupRabbitmq():
 
         channel.queue_declare(queue='middle')
 
+        geoloc = Geocoding()
+
+        def processMiddleChannel(ch, method, properties, body):
+            print(body)
+            print("hola")
+            deserializedData = json.loads(body)
+            print(deserializedData)
+            print(type(body))
+            print(type(deserializedData))
+            geoResult = geoloc.getCoordinates(deserializedData)
+
+            print(geoResult)
+
         channel.basic_consume(queue='middle',
-                              on_message_callback=callback,
+                              on_message_callback=processMiddleChannel,
                               auto_ack=True)
         channel.start_consuming()
 
