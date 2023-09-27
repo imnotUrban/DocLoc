@@ -34,16 +34,20 @@ class Geocoding:
     def getLocations(self, documents) -> list:
         for document in documents:
           self.locations.append(document["location"])
+          print(document)
         return self.locations
 
     # Obtiene lat y lng del documento entrante. # TODO:(máx 10)
     def getCoordinates(self, documents) -> json:
+        
         self.getLocations(documents)
         for place in self.locations:
             locationMatch = self.checkInCache(place)
             if (len(locationMatch) == 0):
                 geocode_result = gmaps.geocode(place)
                 location = place
+                print(location)
+                print(geocode_result)
                 lat = str(geocode_result[0]["geometry"]["location"]["lat"])
                 lng = str(geocode_result[0]["geometry"]["location"]["lng"]) 
                 coordinate = { 
