@@ -34,41 +34,44 @@ class Geocoding:
     def getLocations(self, documents) -> list:
         for document in documents:
           self.locations.append(document["location"])
-          print(document)
         return self.locations
 
     # Obtiene lat y lng del documento entrante. # TODO:(máx 10)
     def getCoordinates(self, documents) -> json:
-        
         self.getLocations(documents)
         for place in self.locations:
             locationMatch = self.checkInCache(place)
             if (len(locationMatch) == 0):
                 geocode_result = gmaps.geocode(place)
                 location = place
-                print(location)
-                print(geocode_result)
-                lat = str(geocode_result[0]["geometry"]["location"]["lat"])
-                lng = str(geocode_result[0]["geometry"]["location"]["lng"]) 
+                if geocode_result == []:
+                    lat = " "
+                    lng = " "
+                else:
+                    lat = str(geocode_result[0]["geometry"]["location"]["lat"])
+                    lng = str(geocode_result[0]["geometry"]["location"]["lng"]) 
                 coordinate = { 
                                 "date": str(datetime.now()), # Tiempo de actualizacion
                                 "location": location,
                                 "lat": lat,
-                                "long": lng
+                                "lng": lng
                             }
                 self.coordinates.append(coordinate)
-                # Guardar en cache
-                CacheDocument(location_id = 100000, # Sin este valor, se rompe. Define el limite de la cache también. Modificable
-                              location = location, 
-                              lat= lat, 
-                              lng= lng).saveCache()
+                print(coordinate)
+                temp = CacheDocument(
+                                location = location, # Sin este valor, se rompe. Define el limite de la cache también. Modificable
+                                lat = lat, 
+                                lng = lng
+                                )
+                temp.saveCache()
+                
             else:
                 coordinate = { 
                                 "date": str(datetime.now()),
                                 "location": locationMatch[0]["location"],
                                 "lat": locationMatch[0]["lat"],
-                                "long": locationMatch[0]["lng"]
+                                "lng": locationMatch[0]["lng"]
                             }
-                self.coordinates.append(coordinate) 
+                self.coordinates.append(coordinate)
         return self.coordinates
         
