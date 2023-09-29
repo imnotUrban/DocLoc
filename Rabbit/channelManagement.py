@@ -47,10 +47,10 @@ def setupRabbitmq():
 
             message = json.dumps(GPTResult["data"])
 
+            doc.updateDocState(2)
             channel.basic_publish(exchange='',
                         routing_key='middle',
                         body=message)
-            doc.updateDocState(2)
 
         channel.basic_consume(queue='input',
                               on_message_callback=processInputChannel,

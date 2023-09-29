@@ -1,6 +1,9 @@
 from fastapi import FastAPI
 from routes.document import document
 from routes.geocache import cache
+from Rabbit.channelManagement import setupRabbitmq
+
+setupRabbitmq()
 
 app = FastAPI()
 
