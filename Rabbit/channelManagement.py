@@ -11,26 +11,15 @@ import json
 import threading
 
 #rabbitmqPort = 5672 # puerto default rabbit
+rabbitmqHost = 'localhost'
+rabbitmqPort = 5008
+
 queryEngine = GPTQueryEngine()
-
-
-def json_to_document(json_data):
-    return Document(
-        id=json_data["id"],
-        title=json_data["title"],
-        text=json_data["text"],
-        date=json_data["date"],
-        url=json_data["url"]
-    )
+geoloc = Geocoding()
 
 def setupRabbitmq():
-    def callback(ch, method, properties, body):
-        print(f" Recibido '{body}'")
-
     # Definir función de consumidor para el primer canal
     def consumeInputMessages():
-        rabbitmqHost = 'localhost'
-        rabbitmqPort = 5672
 
         connection = pika.BlockingConnection(pika.ConnectionParameters(host=rabbitmqHost, port=rabbitmqPort))
         channel = connection.channel()
@@ -59,26 +48,21 @@ def setupRabbitmq():
 
     # Definir función de consumidor para el segundo canal
     def consumeMiddleMessages():
-        rabbitmqHost = 'localhost'
-        rabbitmqPort = 5672
 
         connection = pika.BlockingConnection(pika.ConnectionParameters(host=rabbitmqHost, port=rabbitmqPort))
         channel = connection.channel()
 
         channel.queue_declare(queue='middle')
-
-        geoloc = Geocoding()
+        channel.queue_declare(queue='output')
 
         def processMiddleChannel(ch, method, properties, body):
-            print(body)
-            print("hola")
             deserializedData = json.loads(body)
-            print(deserializedData)
-            print(type(body))
-            print(type(deserializedData))
-            geoResult = geoloc.getCoordinates(deserializedData)
-
-            print(geoResult)
+            geoResult = geoloc.getCoordinates(deserializedData) # Esto deberia volver a la ruta
+            geoJson = json.dumps(geoResult)
+            channel.basic_publish(exchange='',
+                        routing_key='output',
+                        body=geoJson)
+            print("Esta todo en output queue...")
 
         channel.basic_consume(queue='middle',
                               on_message_callback=processMiddleChannel,

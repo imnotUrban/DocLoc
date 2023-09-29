@@ -57,7 +57,6 @@ class Geocoding:
                                 "lng": lng
                             }
                 self.coordinates.append(coordinate)
-                print(coordinate)
                 temp = CacheDocument(
                                 location = location, # Sin este valor, se rompe. Define el limite de la cache también. Modificable
                                 lat = lat, 

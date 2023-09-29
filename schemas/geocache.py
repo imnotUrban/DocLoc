@@ -10,7 +10,6 @@ class CacheDocument(BaseModel):
     
     def saveCache(self):
         newDocument = {"location" : self.location, "lat": self.lat, "lng": self.lng}
-        print(newDocument)
         conn.execute(geocache_table
                         .insert()
                         .values(newDocument))
