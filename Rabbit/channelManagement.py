@@ -12,7 +12,7 @@ import threading
 
 #rabbitmqPort = 5672 # puerto default rabbit
 rabbitmqHost = 'localhost'
-rabbitmqPort = 5008
+rabbitmqPort = 5672
 
 queryEngine = GPTQueryEngine()
 geoloc = Geocoding()

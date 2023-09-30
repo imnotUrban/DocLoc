@@ -8,7 +8,7 @@ document = APIRouter()
 
 # conexión RabbitMQ input
 rabbitmqHost = 'localhost'
-rabbitmqPort = 5008
+rabbitmqPort = 5672
 connection = pika.BlockingConnection(pika.ConnectionParameters(host=rabbitmqHost, port=rabbitmqPort))
 channel = connection.channel()
 
@@ -29,23 +29,21 @@ async def create_documents(document: List[Document]):
                       body=message)
             print("publicado en canal")
 
-        return {"msg": "Documento recibido"} #Se espera que, al integrar todos los ... de la api, devuelva un json con los documetntos procesados
-    except Exception:
-        return {"message": "Ha habido un error al ingresar el documento, intente seguir el formato indicado en la documentación"}
-
-@document.get('/getall')
-async def traer():
-    robate_el_cielo = False
-    salida = []
-    try:
-        while(not robate_el_cielo):
+        docLen = len(document)
+        salida = []
+        docCount = 0
+        while(docCount != docLen):
             _, _, body = channel.basic_get(queue='output')
             if body == None:
                 robate_el_cielo = True
-                break
-            deserializedData = json.loads(body)
-            salida.append(deserializedData)
+            else:
+                deserializedData = json.loads(body)
+                salida.append(deserializedData)
+                docCount = docCount + 1
         return salida
+
+
     except Exception:
-        return {"Msg": "Cola de salida vacia"}
+        return {"message": "Ha habido un error al ingresar el documento, intente seguir el formato indicado en la documentación"}
+
 
