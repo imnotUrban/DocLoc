@@ -1,18 +1,16 @@
-from fastapi import APIRouter  #Define subrutas o rutas por separado
-from typing import List
 from gpt.GPTQueryEngine import GPTQueryEngine
 from google.geocoding import Geocoding
-from config.db import conn
-from models.document import documents
 from schemas.document import Document
-from utils.jsonnify import transform_to_json
 import pika
 import json
 import threading
 
-#rabbitmqPort = 5672 # puerto default rabbit
-rabbitmqHost = 'localhost'
-rabbitmqPort = 5008
+import os
+from dotenv import load_dotenv
+load_dotenv(dotenv_path="../.env")
+
+rabbitmqHost = os.getenv("RABBIT_HOST")
+rabbitmqPort = os.getenv("RABBIT_PORT")
 
 queryEngine = GPTQueryEngine()
 geoloc = Geocoding()

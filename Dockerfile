@@ -8,4 +8,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-CMD ["uvicorn", "main:app", "--reload"]
+EXPOSE 7666
+
+# CMD ["python", "main.py"]
+CMD ["uvicorn", "main:app", "--port", "7666", "--reload"]

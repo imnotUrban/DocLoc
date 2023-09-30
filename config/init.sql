@@ -2,8 +2,8 @@
 CREATE DATABASE IF NOT EXISTS storedb;
 
 -- Crear un usuario con privilegios de administrador
-CREATE USER 'administrador'@'localhost' IDENTIFIED BY '1234';
+CREATE USER 'admin'@'0.0.0.0' IDENTIFIED BY '1234';
 
 -- Asignar privilegios de administrador al usuario
-GRANT ALL PRIVILEGES ON *.* TO 'administrador'@'localhost';
+GRANT ALL PRIVILEGES ON *.* TO 'admin'@'0.0.0.0';
 FLUSH PRIVILEGES;

@@ -3,12 +3,15 @@ from typing import List
 from schemas.document import Document
 import pika
 import json
+import os
+from dotenv import load_dotenv
 
 document = APIRouter()
 
-# conexión RabbitMQ input
-rabbitmqHost = 'localhost'
-rabbitmqPort = 5008
+load_dotenv(dotenv_path="../.env")
+rabbitmqHost = os.getenv("RABBIT_HOST")
+rabbitmqPort = os.getenv("RABBIT_PORT")
+
 connection = pika.BlockingConnection(pika.ConnectionParameters(host=rabbitmqHost, port=rabbitmqPort))
 channel = connection.channel()
 
