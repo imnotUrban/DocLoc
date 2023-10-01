@@ -25,30 +25,23 @@ async def create_documents(document: List[Document]):
         for doc in document:
             doc.saveDocin()
             message = doc.json()
-
             # Envia por el canal input el doc
             channel.basic_publish(exchange='',
                       routing_key='input',
                       body=message)
             print("publicado en canal")
-
-        return {"msg": "Documento recibido"} #Se espera que, al integrar todos los ... de la api, devuelva un json con los documetntos procesados
+        docLen = len(document)
+        salida = []
+        docCount = 0
+        while(docCount != docLen):
+            _, _, body = channel.basic_get(queue='output')
+            deserializedData = json.loads(body)
+            salida.append(deserializedData)
+            docCount = docCount + 1
+        return salida
     except Exception:
         return {"message": "Ha habido un error al ingresar el documento, intente seguir el formato indicado en la documentación"}
 
-@document.get('/getall')
-async def traer():
-    robate_el_cielo = False
-    salida = []
-    try:
-        while(not robate_el_cielo):
-            _, _, body = channel.basic_get(queue='output')
-            if body == None:
-                robate_el_cielo = True
-                break
-            deserializedData = json.loads(body)
-            salida.append(deserializedData)
-        return salida
-    except Exception:
-        return {"Msg": "Cola de salida vacia"}
-
+@document.get("/healthz")
+async def kbrns():
+    return {"msg": "ok"}
