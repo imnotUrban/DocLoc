@@ -3,7 +3,7 @@ import json
 import openai
 # load env variables
 from dotenv import load_dotenv
-load_dotenv()
+load_dotenv(dotenv_path="../.env")
 openai.api_key = os.getenv("OPENAI_API_KEY")
 class GPTQueryEngine:
     def __init__(self):
@@ -11,6 +11,7 @@ class GPTQueryEngine:
     def __makePrompt(self,new: str) -> any:
         return f"""{new}"""
     def __getSystem(self):
+        #TODO #2 pasar a archivo de config
         return '''
 A location is a term that is spatial, geographic, real-world, either natural or man-made, addressable, cartographic, navigable, observable, and existing in the tangible physical realm.
 Specify what a location is NOT by excluding the terms temporal, non-terrestrial, non-spatial, individuals, companies, organizations, and fictional locations.
