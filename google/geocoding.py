@@ -7,21 +7,17 @@ from schemas.geocache import CacheDocument
 import json
 from dotenv import load_dotenv
 import googlemaps
+from dataclasses import dataclass
 
 load_dotenv(dotenv_path="../.env")
 key = os.getenv("API_GEOCODING")
 gmaps = googlemaps.Client(key=key)
 
+@dataclass
 class Geocoding:
     locations = [] # list
     coordinates = [] # json
     
-    def __init__(self):
-        return
-    
-    # Comprobar si una location esta en cache y retornar la primera
-    # TODO: #4 Definir el tamaño máximo de la cache, mover a otro modulo. De otro modo cambiar nombre
-    # TODO: Mover al schema CacheDocument
     def checkInCache(self, location: str) -> json:
         row = conn.execute(geocache_table.select().where(geocache_table.c.location == location)).fetchone()
         if row:
