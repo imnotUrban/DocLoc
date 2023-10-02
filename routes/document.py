@@ -21,6 +21,7 @@ channel.queue_declare(queue='output')
 
 @document.post("/addDocuments")
 async def create_documents(document: List[Document]):
+    channel = connection.channel()
     try:
         for doc in document:
             doc.saveDocin()
@@ -30,17 +31,26 @@ async def create_documents(document: List[Document]):
                       routing_key='input',
                       body=message)
             print("publicado en canal")
-        docLen = len(document)
-        salida = []
-        docCount = 0
-        while(docCount != docLen):
-            _, _, body = channel.basic_get(queue='output')
-            deserializedData = json.loads(body)
-            salida.append(deserializedData)
-            docCount = docCount + 1
-        return salida
+        return {"message": "Documentos ingresados correctamente para procesar"}
     except Exception:
         return {"message": "Ha habido un error al ingresar el documento, intente seguir el formato indicado en la documentación"}
+
+@document.get('/getall')
+async def traer():
+    robate_el_cielo = False
+    salida = []
+    try:
+        while(not robate_el_cielo):
+            _, _, body = channel.basic_get(queue='output')
+            if body == None:
+                robate_el_cielo = True
+                break
+            deserializedData = json.loads(body)
+            salida.append(deserializedData)
+        connection.close()
+        return salida
+    except Exception:
+        return {"Msg": "Cola de salida vacia"}
 
 @document.get("/healthz")
 async def kbrns():
