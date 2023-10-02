@@ -14,10 +14,18 @@ channel = connection.channel()
 
 # la tan esperada cola
 channel.queue_declare(queue='input')
+channel.queue_declare(queue='middle')
 channel.queue_declare(queue='output')
 
 @document.post("/addDocuments")
 async def create_documents(document: List[Document]):
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host=rabbitmqHost, port=rabbitmqPort))
+    channel = connection.channel()
+
+    # la tan esperada cola
+    channel.queue_declare(queue='input')
+    channel.queue_declare(queue='middle')
+    channel.queue_declare(queue='output')
     try:
         for doc in document:
             doc.saveDocin()
@@ -40,10 +48,12 @@ async def create_documents(document: List[Document]):
                 deserializedData = json.loads(body)
                 salida.append(deserializedData)
                 docCount = docCount + 1
+        connection.close()
         return salida
 
 
     except Exception:
+        connection.close()
         return {"message": "Ha habido un error al ingresar el documento, intente seguir el formato indicado en la documentación"}
 
 
