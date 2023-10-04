@@ -3,6 +3,7 @@ import asyncio
 import random
 import pandas as pd
 import time
+import json
 
 csv_file = "./gpt/noticias-2023-05-31.csv"
 data = pd.read_csv(csv_file)
@@ -33,12 +34,22 @@ for i in range(n_noticias):
     }
     docs.append(doc)
 
+
 for doc in docs:
     titulo = str(doc['title'][:50])
     print(f"Fila: {doc['id']}\t Titulo: {titulo}...")
 
+# Para guardar el doc en un .json
+# with open('doc.json', 'w') as jf: 
+#     json.dump(docs[0], jf, ensure_ascii=False, indent=4)
+
+# Para testear un archivo
+# with open('doc.json', 'r') as doc: 
+#     doc = json.load(doc)
+#     docs.append(doc)
+
 # URL de la API
-url = "http://localhost:8000/geolocalize"
+url = "http://127.0.0.1:8000/geolocalize"
 
 # Realiza una solicitud POST a la API con la lista de documentos
 async def enviar_documentos():
