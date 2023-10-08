@@ -1,0 +1,58 @@
+#pip install pytest
+from fastapi.testclient import TestClient
+from main import app
+
+client = TestClient(app)
+
+def testCreateDocuments():
+    # Caso de prueba 1: Enviar un documento válido
+    response = client.post("/geolocalize", json=[
+      {
+        "id": 0,
+        "title": "Pronóstico de lluvia para el fin de semana: Revisa las zonas en las que se esperan precipitaciones",
+        "text": "De acuerdo al reporte de la Dirección Meteorológica de Chile, se espera que distintas zonas del país se vean afectadas por precipitaciones durante este fin de semana, incluyendo el viernes 2 de junio. Es específico, se trataría de 11 regiones en total en las que se presentaría el fenómeno, incluyendo a la zona insular de la región de Valparaíso. Ir a la siguiente nota Según el organismo, en la zona insular de la región de Valparaíso, en Isla de Pascua, se espera lluvia en la noche del sábado y toda la jornada del domingo. También se esperan precipitaciones para este viernes en la zona continental de la región de Valparaíso, donde se harían presente durante la mañana y la tarde. El mismo día, en la región Metropolitana, el fenómeno se presentaría en la tarde y en la noche, mientras que en O'Higgins comenzaría en la mañana y terminaría en la noche. Para la región de Maule se pronostica lluvia desde la madrugada hasta la tarde de este 2 de junio, al igual que en Ñuble, donde también caerían chubascos desde la tarde del sábado hasta la madrugada del domingo. En tanto, En Biobío el pronóstico apunta en la madrugada y mañana del viernes, y desde la mañana hasta el resto de la jornada del sábado. Las precipitaciones se harían presente en La Araucanía en la madrugada, tarde y noche del 2 de junio, y desde la madrugada hasta la tarde del día siguiente. Para Los Ríos se espera que el fenómeno se haga presente todo el viernes y el sábado, al igual que en Los Lagos, donde también se extendería en la noche del domingo. Se espera que en la región de Aysén caiga agua-nieve en la madrugada del 2 de junio, mientras que la lluvia se presentaría en la tarde y en la noche. Al día siguiente se registrarían nevadas hasta la mañana y chubascos el resto de la jornada. Finalmente, el domingo, las precipitaciones ocurrirían en la tarde y en la noche. En la región de Magallanes, en Torres del Paine, caerían chubascos desde la madrugada hasta la tarde del viernes. El 3 de junio habría chubascos de agua-nieve en la mañana y en la tarde, y chubascos de niev en la noche; mientras que el domingo la lluvia se registraría en la tarde y en la noche. En tanto, Punta Arenas presentaría precipitaciones en la madrugada, mañana y noche del viernes, además de la noche del domingo. Todo sobre El Tiempo",
+        "date": "May 31, 2023 @ 20:00:00.000",
+        "url": "https://www.meganoticias.cl/nacional/415732-lluvia-fin-de-semana-santiago-regiones-pronostico-del-tiempo-25-05-2023.html"
+      }
+    ])
+    assert response.status_code == 200
+    #assert "lat" in response.json()  # Verificar que la respuesta contiene "lat"
+
+
+def testCreateVoidDocuments():
+    # Caso de prueba 2: Enviar un documento vacio invalido
+    response = client.post("/geolocalize", json=[])
+    assert response.status_code == 406
+  
+def testCreateManyDocuments():
+    # Caso de prueba 3: Enviar muchos documentos (envio invalido)
+    response = client.post("/geolocalize", json=[
+      {
+        "id": 0,
+        "title": "Pronóstico de lluvia para el fin de semana: Revisa las zonas en las que se esperan precipitaciones",
+        "text": "De acuerdo al reporte de la Dirección Meteorológica de Chile, se espera que distintas zonas del país se vean afectadas por precipitaciones durante este fin de semana, incluyendo el viernes 2 de junio. Es específico, se trataría de 11 regiones en total en las que se presentaría el fenómeno, incluyendo a la zona insular de la región de Valparaíso. Ir a la siguiente nota Según el organismo, en la zona insular de la región de Valparaíso, en Isla de Pascua, se espera lluvia en la noche del sábado y toda la jornada del domingo. También se esperan precipitaciones para este viernes en la zona continental de la región de Valparaíso, donde se harían presente durante la mañana y la tarde. El mismo día, en la región Metropolitana, el fenómeno se presentaría en la tarde y en la noche, mientras que en O'Higgins comenzaría en la mañana y terminaría en la noche. Para la región de Maule se pronostica lluvia desde la madrugada hasta la tarde de este 2 de junio, al igual que en Ñuble, donde también caerían chubascos desde la tarde del sábado hasta la madrugada del domingo. En tanto, En Biobío el pronóstico apunta en la madrugada y mañana del viernes, y desde la mañana hasta el resto de la jornada del sábado. Las precipitaciones se harían presente en La Araucanía en la madrugada, tarde y noche del 2 de junio, y desde la madrugada hasta la tarde del día siguiente. Para Los Ríos se espera que el fenómeno se haga presente todo el viernes y el sábado, al igual que en Los Lagos, donde también se extendería en la noche del domingo. Se espera que en la región de Aysén caiga agua-nieve en la madrugada del 2 de junio, mientras que la lluvia se presentaría en la tarde y en la noche. Al día siguiente se registrarían nevadas hasta la mañana y chubascos el resto de la jornada. Finalmente, el domingo, las precipitaciones ocurrirían en la tarde y en la noche. En la región de Magallanes, en Torres del Paine, caerían chubascos desde la madrugada hasta la tarde del viernes. El 3 de junio habría chubascos de agua-nieve en la mañana y en la tarde, y chubascos de niev en la noche; mientras que el domingo la lluvia se registraría en la tarde y en la noche. En tanto, Punta Arenas presentaría precipitaciones en la madrugada, mañana y noche del viernes, además de la noche del domingo. Todo sobre El Tiempo",
+        "date": "May 31, 2023 @ 20:00:00.000",
+        "url": "https://www.meganoticias.cl/nacional/415732-lluvia-fin-de-semana-santiago-regiones-pronostico-del-tiempo-25-05-2023.html"
+      },
+      {
+        "id": 1,
+        "title": "Alerta meteorológica: Pronóstico de lluvia para el fin de semana en Chile",
+        "text": "Según el informe emitido por el Servicio Meteorológico Nacional de Chile, se anticipa la llegada de condiciones climáticas adversas durante el próximo fin de semana. Se prevé que diversas regiones del país se vean afectadas por precipitaciones, incluyendo el sábado 10 de junio. Con detalles específicos, se espera que un total de 13 regiones experimenten este fenómeno, abarcando desde el norte hasta el sur del país.\n\nDe acuerdo con el pronóstico, en la región de Antofagasta se esperan lluvias intensas desde la madrugada del sábado hasta la tarde, lo que podría generar problemas en áreas propensas a inundaciones. En la región de Atacama, las precipitaciones se pronostican para la tarde y noche del sábado.\n\nEn la región de Coquimbo, las lluvias llegarían en la tarde del sábado y se extenderían hasta la mañana del domingo. Mientras tanto, en la región de Valparaíso, se esperan chubascos durante la noche del sábado y la madrugada del domingo, afectando tanto a la zona continental como a la insular, incluyendo Isla de Pascua.\n\nPara la región Metropolitana, se pronostica lluvia en la tarde del sábado y en la mañana del domingo. En O'Higgins, las precipitaciones comenzarían en la madrugada del sábado y continuarían hasta la tarde.\n\nEn Maule, se espera lluvia desde la madrugada hasta la tarde del 10 de junio, y en Ñuble, los chubascos caerían desde la tarde del sábado hasta la madrugada del domingo.\n\nEn Biobío, el pronóstico apunta a lluvia en la madrugada y la mañana del sábado, extendiéndose hasta el resto del día. La Araucanía experimentaría precipitaciones en la madrugada, tarde y noche del 10 de junio, y continuarían hasta la tarde del día siguiente.\n\nEn la región de Los Ríos, se espera que las precipitaciones estén presentes durante todo el sábado y domingo, al igual que en Los Lagos, donde también se extenderían hasta la noche del domingo.\n\nSe anticipa que en la región de Aysén, caiga aguanieve en la madrugada del 10 de junio, seguido de lluvia por la tarde y noche. Al día siguiente, se registrarían nevadas hasta la mañana y chubascos durante el resto del día. Finalmente, el domingo, las precipitaciones ocurrirían en la tarde y noche.\n\nEn la región de Magallanes, en Torres del Paine, se prevén chubascos desde la madrugada hasta la tarde del viernes 9 de junio. El 10 de junio habría chubascos de aguanieve en la mañana y la tarde, seguidos de chubascos de nieve en la noche; mientras que el domingo la lluvia se registraría en la tarde y noche.\n\nPor último, Punta Arenas presentaría precipitaciones en la madrugada, mañana y noche del viernes 9 de junio, además de la noche del domingo 11 de junio.\n\nMantente informado sobre las condiciones climáticas y toma las precauciones necesarias para enfrentar esta situación meteorológica.",
+        "date": "Jun 5, 2023 @ 18:30:00.000",
+        "url": "https://www.ejemplonoticias.cl/nacional/123456-alerta-meteorologica-lluvia-fin-de-semana-chile-pronostico-10-06-2023.html"
+      }
+    ])
+    assert response.status_code == 406
+
+def testCreateImaginaryDocument():
+    # Caso de prueba 4: Enviar un documento que no deberia existir
+    response = client.post("/geolocalize", json=[
+      {
+        "id": 3,
+        "title": "Noticias de Azeroth: Preparativos para la Batalla en Shadowlands",
+        "text": "En el mundo de World of Warcraft, la tensión aumenta a medida que los héroes de Azeroth se preparan para una nueva batalla épica en las Tierras Sombrías. La expansión Shadowlands ha traído consigo un giro en la narrativa y desafíos emocionantes para los aventureros de la Horda y la Alianza por igual.\n\nLos jugadores han estado explorando los reinos misteriosos de las Tierras Sombrías, donde se encuentran con las cuatro Covenants: los Kyrianos, Necroseñores, Venthyr y los Nocheterna. Cada Covenant ofrece poderes únicos y habilidades especiales que los jugadores pueden desbloquear y personalizar para adaptarse a su estilo de juego.\n\nLa Torre de Torghast, la Torre de los Condenados, se ha convertido en un lugar crucial para la obtención de legendarios y mejoras poderosas. Los jugadores se enfrentan a desafíos generados aleatoriamente en esta mazmorra infinita, donde la dificultad aumenta a medida que avanzan. ¡Es el lugar perfecto para demostrar su valía!\n\nAdemás, la amenaza del Carcelero y su plan maestro en las Tierras Sombrías sigue siendo una preocupación constante para los héroes. La trama se desarrolla mientras los jugadores descubren más sobre los oscuros secretos de este antagonista.\n\nCon el lanzamiento de la primera gran actualización de Shadowlands, los jugadores pueden esperar nuevas zonas, mazmorras y desafíos para mantenerlos entretenidos durante meses.\n\n¿Estás listo para unirte a la lucha en las Tierras Sombrías? Prepárate para forjar alianzas, descubrir secretos y enfrentarte a poderosos enemigos en el emocionante mundo de World of Warcraft.",
+        "date": "Oct 15, 2023 @ 14:45:00.000",
+        "url": "https://www.wowhead.com/es/azeroth/shadowlands-preparativos-batalla-15-10-2023.html"
+      }
+    ])
+    assert response.status_code == 200

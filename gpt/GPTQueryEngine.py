@@ -4,7 +4,7 @@ import openai
 # load env variables
 from dotenv import load_dotenv
 load_dotenv(dotenv_path="../.env")
-openai.api_key = "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"
+openai.api_key = "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"
 class GPTQueryEngine:
     def __init__(self):
         pass
