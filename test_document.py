@@ -1,4 +1,5 @@
 #pip install pytest
+#UTILIZAR COMANDO: pytest test_document.py
 from gpt.GPTQueryEngine import GPTQueryEngine
 from google.geocoding import Geocoding
 from fastapi.testclient import TestClient
