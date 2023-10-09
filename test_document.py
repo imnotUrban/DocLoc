@@ -1,5 +1,8 @@
 #pip install pytest
+from gpt.GPTQueryEngine import GPTQueryEngine
+from google.geocoding import Geocoding
 from fastapi.testclient import TestClient
+from datetime import datetime
 from main import app
 
 client = TestClient(app)
@@ -16,8 +19,17 @@ def testCreateDocuments():
       }
     ])
     assert response.status_code == 200
-    #assert "lat" in response.json()  # Verificar que la respuesta contiene "lat"
 
+    responseJSON = response.json()
+    print(responseJSON)
+    print(type(responseJSON))
+
+    # Se tienen las claves requeridas
+    assert all({'date', 'location', 'lat', 'lng'}.issubset(item.keys()) for item in responseJSON), "No todos los elementos tienen las claves requeridas"
+    # Los valores lat y lng son validos
+    assert all(isinstance(float(item['lat']), float) and isinstance(float(item['lng']), float) for item in responseJSON), "Al menos una coordenada no es un número válido"
+    # No hay lugares duplicados
+    assert len(responseJSON) == len(set((item['location']) for item in responseJSON)), "Hay elementos duplicados en la lista"
 
 def testCreateVoidDocuments():
     # Caso de prueba 2: Enviar un documento vacio invalido
@@ -56,3 +68,92 @@ def testCreateImaginaryDocument():
       }
     ])
     assert response.status_code == 200
+
+    responseJSON = response.json()
+    print(responseJSON)
+    print(type(responseJSON))
+
+    # Se tienen las claves requeridas
+    assert all({'date', 'location', 'lat', 'lng'}.issubset(item.keys()) for item in responseJSON), "No todos los elementos tienen las claves requeridas"
+    # Los valores lat y lng son validos
+    assert all(item['lat'] == ' ' and item['lng'] == ' ' for item in responseJSON), "Al menos una coordenada no es un espacio en blanco"
+    # No hay lugares duplicados
+    assert len(responseJSON) == len(set((item['location']) for item in responseJSON)), "Hay elementos duplicados en la lista"
+
+def testQueryGPT():
+    # Caso de prueba 5: Funcionamiento de API GPT
+    queryEngine = GPTQueryEngine()
+
+    doc = {
+      "id": 0,
+      "title": "Pronóstico de lluvia para el fin de semana: Revisa las zonas en las que se esperan precipitaciones",
+      "text": "De acuerdo al reporte de la Dirección Meteorológica de Chile, se espera que distintas zonas del país se vean afectadas por precipitaciones durante este fin de semana, incluyendo el viernes 2 de junio. Es específico, se trataría de 11 regiones en total en las que se presentaría el fenómeno, incluyendo a la zona insular de la región de Valparaíso. Ir a la siguiente nota Según el organismo, en la zona insular de la región de Valparaíso, en Isla de Pascua, se espera lluvia en la noche del sábado y toda la jornada del domingo. También se esperan precipitaciones para este viernes en la zona continental de la región de Valparaíso, donde se harían presente durante la mañana y la tarde. El mismo día, en la región Metropolitana, el fenómeno se presentaría en la tarde y en la noche, mientras que en O'Higgins comenzaría en la mañana y terminaría en la noche. Para la región de Maule se pronostica lluvia desde la madrugada hasta la tarde de este 2 de junio, al igual que en Ñuble, donde también caerían chubascos desde la tarde del sábado hasta la madrugada del domingo. En tanto, En Biobío el pronóstico apunta en la madrugada y mañana del viernes, y desde la mañana hasta el resto de la jornada del sábado. Las precipitaciones se harían presente en La Araucanía en la madrugada, tarde y noche del 2 de junio, y desde la madrugada hasta la tarde del día siguiente. Para Los Ríos se espera que el fenómeno se haga presente todo el viernes y el sábado, al igual que en Los Lagos, donde también se extendería en la noche del domingo. Se espera que en la región de Aysén caiga agua-nieve en la madrugada del 2 de junio, mientras que la lluvia se presentaría en la tarde y en la noche. Al día siguiente se registrarían nevadas hasta la mañana y chubascos el resto de la jornada. Finalmente, el domingo, las precipitaciones ocurrirían en la tarde y en la noche. En la región de Magallanes, en Torres del Paine, caerían chubascos desde la madrugada hasta la tarde del viernes. El 3 de junio habría chubascos de agua-nieve en la mañana y en la tarde, y chubascos de niev en la noche; mientras que el domingo la lluvia se registraría en la tarde y en la noche. En tanto, Punta Arenas presentaría precipitaciones en la madrugada, mañana y noche del viernes, además de la noche del domingo. Todo sobre El Tiempo",
+      "date": "May 31, 2023 @ 20:00:00.000",
+      "url": "https://www.meganoticias.cl/nacional/415732-lluvia-fin-de-semana-santiago-regiones-pronostico-del-tiempo-25-05-2023.html"
+    }
+
+    PTResult = queryEngine.query(doc["text"])
+    print(type(PTResult))
+    print(PTResult)
+
+    # PTResult es dictionary?
+    assert isinstance(PTResult, dict)
+    # PTResult tiene data de GPT?
+    assert "data" in PTResult
+
+    for item in PTResult["data"]:
+        # GPT entrego lugares?
+        assert "location" in item 
+        # GPT entrego resumenes?
+        assert "summary" in item
+
+def testGeoGoogle():
+    # Caso de prueba 6: Enviar a procesar a google el resultado de GPT
+    geoloc = Geocoding()
+
+    GPTData = [
+        {'location': 'zona insular de la región de Valparaíso, Isla de Pascua', 'summary': 'Se espera lluvia en la noche del sábado y toda la jornada del domingo.'},
+        {'location': 'zona continental de la región de Valparaíso', 'summary': 'Se esperan precipitaciones para este viernes durante la mañana y la tarde.'},
+        {'location': 'región Metropolitana', 'summary': 'El fenómeno se presentaría en la tarde y en la noche del viernes.'},
+        {'location': "O'Higgins", 'summary': 'El fenómeno comenzaría en la mañana y terminaría en la noche del viernes.'},
+        {'location': 'región de Maule', 'summary': 'Se pronostica lluvia desde la madrugada hasta la tarde de este 2 de junio.'},
+        {'location': 'Ñuble', 'summary': 'Caerían chubascos desde la tarde del sábado hasta la madrugada del domingo.'},
+        {'location': 'Biobío', 'summary': 'El pronóstico apunta a precipitaciones en la madrugada y mañana del viernes, y desde la mañana hasta el resto de la jornada del sábado.'},
+        {'location': 'La Araucanía', 'summary': 'Las precipitaciones se harían presente en la madrugada, tarde y noche del 2 de junio, y desde la madrugada hasta la tarde del día siguiente.'},
+        {'location': 'Los Ríos', 'summary': 'Se espera que el fenómeno se haga presente todo el viernes y el sábado.'},
+        {'location': 'Los Lagos', 'summary': 'Se espera que el fenómeno se haga presente todo el viernes y el sábado, y también se extendería en la noche del domingo.'},
+        {'location': 'región de Aysén', 'summary': 'Se espera que caiga agua-nieve en la madrugada del 2 de junio, y luego se registrarían nevadas hasta la mañana y chubascos el resto de la jornada del domingo.'},
+        {'location': 'región de Magallanes, Torres del Paine', 'summary': 'Caerían chubascos desde la madrugada hasta la tarde del viernes. El 3 de junio habría chubascos de agua-nieve en la mañana y en la tarde, y chubascos de nieve en la noche; mientras que el domingo la lluvia se registraría en la tarde y en la noche.'},
+        {'location': 'Punta Arenas', 'summary': 'Presentaría precipitaciones en la madrugada, mañana y noche del viernes, además de la noche del domingo.'}
+    ]
+    geoResult = geoloc.getCoordinates(GPTData)
+    print(geoResult)
+    
+    # Lo devuelto por google es una lista?
+    assert isinstance(geoResult, list)
+    # Cada item entregado por google
+    for item in geoResult:
+        # Es de tipo dict?
+        assert isinstance(item, dict)
+        # Tiene date?
+        assert 'date' in item
+        # Proporciona lugar?
+        assert 'location' in item
+        # Proporciona lat y lng?
+        assert 'lat' in item
+        assert 'lng' in item
+    
+    # Los lugares entregados no son vacios?
+    for item in geoResult:
+      assert 'location' in item
+      assert isinstance(item['location'], str)
+      assert len(item['location']) > 0, "Lugar vacio"
+
+    
+    # Las fechas proporcionadas son validas?
+    for item in geoResult:
+        assert 'date' in item
+        try:
+            datetime.strptime(item['date'], '%Y-%m-%d %H:%M:%S.%f')
+        except ValueError:
+            assert False, f"Formato de fecha invalido: {item['date']}"
