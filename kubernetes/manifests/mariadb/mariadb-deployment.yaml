@@ -45,11 +45,11 @@ spec:
         #    - "mysqladmin ping -h 127.0.0.1 -u MYSQL_USER -p MYSQL_ROOT_PASSWORD"
         #  initialDelaySeconds: 15  # Initial delay before starting liveness probes
         #  periodSeconds: 10  # Frequency of liveness probes
-        volumeMounts:
-        - name: mariadb-persistent-storage
-          mountPath: /var/lib/mysql  # Directory where persistent storage will be mounted
-      volumes:
-      - name: mariadb-persistent-storage
-        persistentVolumeClaim:
-          claimName: mariadb-pvc  # Name of the PVC you want to mount
+      #  volumeMounts:
+      #  - name: mariadb-persistent-storage
+      #    mountPath: /var/lib/mysql  # Directory where persistent storage will be mounted
+      #volumes:
+      #- name: mariadb-persistent-storage
+      #  persistentVolumeClaim:
+      #    claimName: mariadb-pvc  # Name of the PVC you want to mount
 

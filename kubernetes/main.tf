@@ -4,7 +4,7 @@
 
 resource "null_resource" "install_kubernetes" {
   # There are no required attributes in this case
-
+  
   # Run local commands to install Docker and Kubernetes
   provisioner "local-exec" {
     command = <<EOT
@@ -33,12 +33,14 @@ resource "null_resource" "install_kubernetes" {
       sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
       # Install a network plugin (example: Calico)
-      kubectl apply -f https://docs.projectcalico.org/v3.8/manifests/calico.yaml
-	  
-	    # Run the desired Kubernetes YAML file (replace with the location of your YAML file)
-	    kubectl apply -f manifests/
+      kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.26.3/manifests/tigera-operator.yaml
+      kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.26.3/manifests/custom-resources.yaml
 
-    EOT
+      # Run the desired Kubernetes YAML file (replace with the location of your YAML file)
+      kubectl apply -f manifests/mariadb
+      kubectl apply -f manifests/fastapi
+
+EOT
   }
 }
 
