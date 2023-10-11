@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fastapi-deployment
+spec:
+  replicas: 1  # The desired number of replicas (adjust as needed)
+  selector:
+    matchLabels:
+      app: fastapi
+  template:
+    metadata:
+      labels:
+        app: fastapi
+    spec:
+      containers:
+      - name: fastapi
+        image: fastapi:dev  # Replace with the actual image and tag
+        ports:
+        - containerPort: 80  # The port your FastAPI application listens on
+        env:
+          - name: DATABASE_URL
+            value: "mysql://root:1234@localhost:3306/storedb"  # Replace with your MySQL connection details
+        resources:
+          limits:
+            memory: "256Mi"   # Maximum memory limit
+            cpu: "0.5"         # Maximum CPU usage limit
+          requests:
+            memory: "128Mi"   # Minimum memory request
+            cpu: "0.25"        # Minimum CPU usage request
+        readinessProbe:
+          httpGet:
+            path: /healthz  # Readiness probe path
+            port: 80
+          initialDelaySeconds: 5  # Initial delay before starting readiness probes
+          periodSeconds: 10  # Frequency of readiness probes
+        livenessProbe:
+          httpGet:
+            path: /healthz  # Liveness probe path
+            port: 80
+          initialDelaySeconds: 15  # Initial delay before starting liveness probes
+          periodSeconds: 10  # Frequency of liveness probes
