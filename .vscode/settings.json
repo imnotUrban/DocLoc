@@ -2,5 +2,12 @@
     "[python]": {
         "editor.defaultFormatter": "ms-python.autopep8"
     },
-    "python.formatting.provider": "none"
+    "python.formatting.provider": "none",
+    "yaml.schemas": {
+        "file:///home/marc/.vscode-server/extensions/docsmsft.docs-yaml-1.0.1/dist/toc.schema.json": "/toc\\.yml/i",
+        "https://json.schemastore.org/yamllint.json": [
+            "file:///home/marc/DocLoc/kubernetes/manifests/fastapi/fastapi-service.yaml",
+            "file:///home/marc/DocLoc/kubernetes/manifests/fastapi/fastapi-deployment.yaml"
+        ]
+    }
 }
