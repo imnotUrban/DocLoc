@@ -7,21 +7,17 @@ from schemas.geocache import CacheDocument
 import json
 from dotenv import load_dotenv
 import googlemaps
+from dataclasses import dataclass
 
 load_dotenv(dotenv_path="../.env")
 key = os.getenv("API_GEOCODING")
 gmaps = googlemaps.Client(key=key)
 
+@dataclass
 class Geocoding:
     locations = [] # list
     coordinates = [] # json
     
-    def __init__(self):
-        return
-    
-    # Comprobar si una location esta en cache y retornar la primera
-    # TODO: #4 Definir el tamaño máximo de la cache, mover a otro modulo. De otro modo cambiar nombre
-    # TODO: Mover al schema CacheDocument
     def checkInCache(self, location: str) -> json:
         row = conn.execute(geocache_table.select().where(geocache_table.c.location == location)).fetchone()
         if row:
@@ -36,11 +32,18 @@ class Geocoding:
           self.locations.append(document["location"])
         return self.locations
 
+    def make_doc(self, location, lat, lng):
+        return { "date": str(datetime.now()), # Tiempo de actualizacion
+                "location": location,
+                "lat": lat,
+                "lng": lng
+                }
+
     # Obtiene lat y lng del documento entrante. # TODO:(máx 10)
     def getCoordinates(self, documents) -> json:
         self.getLocations(documents)
         for place in self.locations:
-            locationMatch = self.checkInCache(place)
+            locationMatch = self.checkInCache(place) # esto da error parece
             if (len(locationMatch) == 0):
                 geocode_result = gmaps.geocode(place)
                 location = place
@@ -50,27 +53,17 @@ class Geocoding:
                 else:
                     lat = str(geocode_result[0]["geometry"]["location"]["lat"])
                     lng = str(geocode_result[0]["geometry"]["location"]["lng"]) 
-                coordinate = { 
-                                "date": str(datetime.now()), # Tiempo de actualizacion
-                                "location": location,
-                                "lat": lat,
-                                "lng": lng
-                            }
+                coordinate =  self.make_doc(location=location, lat=lat, lng=lng)
                 self.coordinates.append(coordinate)
-                temp = CacheDocument(
-                                location = location, # Sin este valor, se rompe. Define el limite de la cache también. Modificable
-                                lat = lat, 
-                                lng = lng
-                                )
+                temp = CacheDocument(location = location, lat = lat, lng = lng)
                 temp.saveCache()
                 
             else:
-                coordinate = { 
-                                "date": str(datetime.now()),
-                                "location": locationMatch[0]["location"],
-                                "lat": locationMatch[0]["lat"],
-                                "lng": locationMatch[0]["lng"]
-                            }
+                match = locationMatch[0]
+                coordinate =  self.make_doc(location=match["location"], lat=match["lat"], lng=match["lng"])
                 self.coordinates.append(coordinate)
-        return self.coordinates
+        geoResult = self.coordinates
+        self.locations = []
+        self.coordinates = []
+        return geoResult
         

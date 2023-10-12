@@ -1,4 +1,7 @@
-FROM python:3.11.6-alpine3.18
+FROM python:3.11.6
+
+#RUN apk add --no-cache gcc
+#RUN apk update && apk add pkgconfig mariadb-dev
 
 WORKDIR /app
 

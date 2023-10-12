@@ -1,11 +1,10 @@
-from fastapi import APIRouter  #Define subrutas o rutas por separado
+from fastapi import APIRouter,  HTTPException  #Define subrutas o rutas por separado
 from typing import List
 from gpt.GPTQueryEngine import GPTQueryEngine
 from google.geocoding import Geocoding
-from config.db import conn
-from models.document import documents
 from schemas.document import Document
-from utils.jsonnify import transform_to_json
+
+MAXDOCUMENTS = 1  #Número máximo de documentos que se pueden enviar por vez a la API
 
 document = APIRouter()
 queryEngine = GPTQueryEngine()
@@ -13,7 +12,14 @@ geoloc = Geocoding()
 
 @document.post("/geolocalize")
 async def create_documents(document: List[Document]):
+    
+    if(len(document) > MAXDOCUMENTS):
+        raise HTTPException(status_code=406, detail="Se permite un máximo de 1 documento a procesar por petición")
+    elif(len(document) == 0):
+        raise HTTPException(status_code=406, detail="debe enviar al menos un documento")
+
     try:
+        
         for doc in document:
             doc.saveDocin()
 
@@ -24,5 +30,5 @@ async def create_documents(document: List[Document]):
             doc.updateDocState(2)
 
         return geoResult
-    except Exception:
-        return {"message" : "Ha habido un error al ingresar el documento, intente seguir el formato indicado en la documentación"}
+    except Exception as e:
+        raise HTTPException(status_code=422, detail="Ha habido un error al ingresar el documento, intente seguir el formato indicado en la documentación")
