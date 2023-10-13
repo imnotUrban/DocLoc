@@ -32,6 +32,40 @@ def testCreateDocuments():
     # No hay lugares duplicados
     assert len(responseJSON) == len(set((item['location']) for item in responseJSON)), "Hay elementos duplicados en la lista"
 
+
+    # Datos de referencia con un margen de error de 10
+    reference_data = [
+        {'date': '2023-10-13 12:55:06.136412', 'location': 'zona insular de la región de Valparaíso, Isla de Pascua', 'lat': '-27.112723', 'lng': '-109.3496865'}, 
+        {'date': '2023-10-13 12:55:06.136805', 'location': 'zona continental de la región de Valparaíso', 'lat': '-32.5040172', 'lng': '-71.0022311'}, 
+        {'date': '2023-10-13 12:55:06.137143', 'location': 'región Metropolitana', 'lat': '-33.4843354', 'lng': '-70.6216794'}, 
+        {'date': '2023-10-13 12:55:06.137485', 'location': "O'Higgins", 'lat': '0.0', 'lng': '0.0'}, 
+        {'date': '2023-10-13 12:55:06.137817', 'location': 'región de Maule', 'lat': '-35.5163603', 'lng': '-71.5723953'}, 
+        {'date': '2023-10-13 12:55:06.138187', 'location': 'Ñuble', 'lat': '-36.7225743', 'lng': '-71.7622481'}, 
+        {'date': '2023-10-13 12:55:06.138538', 'location': 'Biobío', 'lat': '-37.4464428', 'lng': '-72.1416132'}, 
+        {'date': '2023-10-13 12:55:06.138881', 'location': 'La Araucanía', 'lat': '-38.948921', 'lng': '-72.331113'}, 
+        {'date': '2023-10-13 12:55:06.139189', 'location': 'Los Ríos', 'lat': '-1.0230607', 'lng': '-79.4608897'}, 
+        {'date': '2023-10-13 12:55:06.139508', 'location': 'Los Lagos', 'lat': '-41.9197779', 'lng': '-72.1416132'}, 
+        {'date': '2023-10-13 12:55:06.139805', 'location': 'región de Aysén', 'lat': '-46.378345', 'lng': '-72.3007623'}, 
+        {'date': '2023-10-13 12:55:06.140146', 'location': 'región de Magallanes, Torres del Paine', 'lat': '-51.25325729999999', 'lng': '-72.35167659999999'}, 
+        {'date': '2023-10-13 12:55:06.140501', 'location': 'Punta Arenas', 'lat': '-53.1633845', 'lng': '-70.9078263'}
+    ]
+
+    # Asegurarse de que haya la misma cantidad de elementos en la respuesta y los datos de referencia
+    assert len(responseJSON) == len(reference_data), "La cantidad de elementos no coincide"
+
+    # Comparar los datos con un margen de error de 10 para las coordenadas
+    for i, reference_item in enumerate(reference_data):
+        response_item = responseJSON[i]
+        
+        # Compara las coordenadas con un margen de error de 10
+        lat_reference = float(reference_item['lat'])
+        lng_reference = float(reference_item['lng'])
+        lat_response = float(response_item['lat'])
+        lng_response = float(response_item['lng'])
+
+        assert abs(lat_reference - lat_response) <= 10, f"La latitud no coincide para el elemento {i}"
+        assert abs(lng_reference - lng_response) <= 10, f"La longitud no coincide para el elemento {i}"
+
 def testCreateVoidDocuments():
     # Caso de prueba 2: Enviar un documento vacio invalido
     response = client.post("/geolocalize", json=[])
