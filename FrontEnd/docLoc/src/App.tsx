@@ -1,8 +1,8 @@
 import { Form } from "./Components/Form"
-import { Map } from "./Components/Map"
+import { MapView } from "./Components/MapView"
 import { Header } from "./Components/Header"
 import 'tailwindcss/tailwind.css';
-
+// w-600 h-400
 export const App = () => {
   return (
     <div>
@@ -10,9 +10,9 @@ export const App = () => {
       <Header />
       
       <div className="grid grid-cols-3 gap-4" >
-        <div className="col-span-2">
+        <div className="col-span-2 bg-red-500">
 
-          <Map/>
+          <MapView/>
 
         </div>
 

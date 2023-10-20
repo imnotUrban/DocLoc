@@ -12,3 +12,11 @@
 .header_color{
   background-color: rgb(48, 46, 46);
 }
+
+
+.leaflet-container {
+
+  width: 66vw;
+  height: 60vh;
+
+}
