@@ -1,2 +1,7 @@
 ./**/__pycache__
+Rabbit
 .env
+doc.json
+noticias.json
+test.py
+test.ipynb
