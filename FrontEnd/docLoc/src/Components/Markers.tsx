@@ -20,7 +20,7 @@ const Markers: React.FC<MarkersProps> = (props) => {
       key={i}
       position={place.geometry}
     >
-        <Popup>{place.name}</Popup>
+        <Popup>{place.name}  <br/> a </Popup>
     </Marker>
   ));
 
