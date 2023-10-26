@@ -9,6 +9,7 @@ documents = Table("documents", meta, Column(
     Column("date", String(255),nullable = False),
     Column("url", String(255),nullable = False),
     Column("state", Integer,nullable = False),
+    Column("location", Text),
     Column("summary", Text),
     Column("lat", String(255)),
     Column("lng", String(255))

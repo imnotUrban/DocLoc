@@ -40,30 +40,28 @@ class Geocoding:
                 }
 
     # Obtiene lat y lng del documento entrante. # TODO:(máx 10)
-    def getCoordinates(self, documents) -> json:
-        self.getLocations(documents)
-        for place in self.locations:
-            locationMatch = self.checkInCache(place) # esto da error parece
-            if (len(locationMatch) == 0):
-                geocode_result = gmaps.geocode(place)
-                location = place
-                if geocode_result == []:
-                    lat = " "
-                    lng = " "
-                else:
-                    lat = str(geocode_result[0]["geometry"]["location"]["lat"])
-                    lng = str(geocode_result[0]["geometry"]["location"]["lng"]) 
-                coordinate =  self.make_doc(location=location, lat=lat, lng=lng)
-                self.coordinates.append(coordinate)
-                temp = CacheDocument(location = location, lat = lat, lng = lng)
-                temp.saveCache()
-                
+    def getCoordinates(self, document) -> json:
+        place = document['location']
+        locationMatch = self.checkInCache(place)
+        if (len(locationMatch) == 0):
+            geocode_result = gmaps.geocode(place)
+            location = place
+            if geocode_result == []:
+                lat = " "
+                lng = " "
             else:
-                match = locationMatch[0]
-                coordinate =  self.make_doc(location=match["location"], lat=match["lat"], lng=match["lng"])
-                self.coordinates.append(coordinate)
+                lat = str(geocode_result[0]["geometry"]["location"]["lat"])
+                lng = str(geocode_result[0]["geometry"]["location"]["lng"]) 
+            coordinate =  self.make_doc(location=location, lat=lat, lng=lng)
+            self.coordinates.append(coordinate)
+            temp = CacheDocument(location = location, lat = lat, lng = lng)
+            temp.saveCache()
+            
+        else:
+            match = locationMatch[0]
+            coordinate =  self.make_doc(location=match["location"], lat=match["lat"], lng=match["lng"])
+            self.coordinates.append(coordinate)
         geoResult = self.coordinates
-        self.locations = []
         self.coordinates = []
         return geoResult
         

@@ -20,18 +20,23 @@ async def create_documents(document: List[Document]):
 
     try:
         doc =  document[0]
-        result = doc.is_title_exists()
+        result = doc.exists()
         if result is not None:
             return result
         doc.saveDocin()
+        doc.updateDocState(1)
+    
         GPTResult = queryEngine.query(doc.text)
         doc.updateSummary(GPTResult["data"][0]["summary"])
-        doc.updateDocState(1)
+        doc.updateDocState(2)
+
         geoResult = geoloc.getCoordinates(GPTResult["data"][0])
+        location = geoResult[0]['location']
         lat = geoResult[0]['lat']
         lng = geoResult[0]['lng'] 
-        doc.updateDocLatLng(lat, lng)
-        doc.updateDocState(2)
-        return geoResult[0]
+        doc.updateDocLocLatLng(location, lat, lng)
+        doc.updateDocState(3) # Documento procesado correctamente
+
+        return doc.geolocalized()
     except Exception as e:
         raise HTTPException(status_code=422, detail="Ha habido un error al ingresar el documento, intente seguir el formato indicado en la documentación")
