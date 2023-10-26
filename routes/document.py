@@ -19,16 +19,19 @@ async def create_documents(document: List[Document]):
         raise HTTPException(status_code=406, detail="debe enviar al menos un documento")
 
     try:
-        
-        for doc in document:
-            doc.saveDocin()
-
-            GPTResult = queryEngine.query(doc.text)
-            doc.updateDocState(1)
-
-            geoResult = geoloc.getCoordinates(GPTResult["data"])
-            doc.updateDocState(2)
-
-        return geoResult
+        doc =  document[0]
+        result = doc.is_title_exists()
+        if result is not None:
+            return result
+        doc.saveDocin()
+        GPTResult = queryEngine.query(doc.text)
+        doc.updateSummary(GPTResult["data"][0]["summary"])
+        doc.updateDocState(1)
+        geoResult = geoloc.getCoordinates(GPTResult["data"][0])
+        lat = geoResult[0]['lat']
+        lng = geoResult[0]['lng'] 
+        doc.updateDocLatLng(lat, lng)
+        doc.updateDocState(2)
+        return geoResult[0]
     except Exception as e:
         raise HTTPException(status_code=422, detail="Ha habido un error al ingresar el documento, intente seguir el formato indicado en la documentación")

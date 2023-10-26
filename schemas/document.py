@@ -9,9 +9,9 @@ class Document(BaseModel):
     date: str
     url: str
     state: int | None = None 
-    result: str | None = None
+    summary: str | None = None
     lat: str | None = None 
-    long: str | None = None
+    lng: str | None = None
     
     #Guarda el documento en la base de datos
     def saveDocin(self):
@@ -42,18 +42,35 @@ class Document(BaseModel):
         except Exception as e:
             raise Exception(f"No se ha podido actualizar el resultado del documento: {str(e)}")
 
-    def updateDocLatLong(self, docLat : str, docLong: str):  
+    def updateDocLatLng(self, docLat : str, docLng: str):  
         try:
         # Supongamos que tienes una variable self.id que contiene el ID del documento que deseas actualizar
-            conn.execute(documents.update().where(documents.c.id == self.id).values(lat=docLat))
-            conn.commit()
+            conn.execute(documents.update().where(documents.c.id == self.id).values(lat=docLat, lng=docLng))
             print("Latitud del documento actualizado correctamente")
-            conn.execute(documents.update().where(documents.c.id == self.id).values(long=docLong))
-            conn.commit()
             print("Longitud del documento actualizado correctamente")
+            conn.commit()
         except Exception as e:
             raise Exception(f"No se ha podido actualizar la Latitud o longitud del documento: {str(e)}")
 
-    
+    def updateSummary(self, summary):
+        try:
+            conn.execute(documents.update().where(documents.c.id == self.id)).values(summary=summary)
+            print("Resumen actualizado")
+            conn.commit()
+        except Exception as e:
+            raise Exception(f"No se ha podido actualizar el resumen: {str(e)}")
+        
+    def is_title_exists(self) -> bool:
+        try:
+            result = conn.execute(documents.select().where(documents.c.title == self.title)).fetchone()
+            if result is not None:
+                print(result)
+                document = {"title": result[1], "text": result[2], "date":result[3], "url":result[4], "lat":result[7], "lng":result[8]}
+                return document
+            else: 
+                return None
+        except Exception as e:
+            raise Exception(f"No se ha podido verificar la existencia del título: {str(e)}")
+
 class Config:
     orm_mode = True
