@@ -11,10 +11,10 @@ db_name = os.getenv("DB_NAME")
 db_port = os.getenv("DB_PORT_LOCAL")
 db_host = os.getenv("DB_HOST_LOCAL")
 
-#engine = create_engine(f"mariadb+pymysql://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}") # Para local
-
 # To use in Kubernetes
-engine = create_engine(f"mysql://{db_user}:{db_pass}@mariadb-service.default.svc.cluster.local/{db_name}")
+engine = create_engine(f"mysql://{db_user}:{db_pass}@mariadb-service.default.svc.cluster.local:{db_port}/{db_name}")
+
+#engine = create_engine(f"mariadb+pymysql://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}") # Para local
 
 #db_container_host = os.getenv("DB_HOST_DOCKER")
 #engine = create_engine(f"mariadb+pymysql://{db_user}:{db_pass}@{db_container_host}/{db_name}") # Para docker

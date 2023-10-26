@@ -16,7 +16,7 @@ spec:
       - name: fastapi
         image: fastapi:dev  # Replace with the actual image and tag
         ports:
-        - containerPort: 80  # The port your FastAPI application listens on
+        - containerPort: 5001  # The port your FastAPI application listens on
         #env:
         #  - name: DATABASE_URL
         #    value: "mysql://root:1234@localhost:3306/storedb"  # Replace with your MySQL connection details

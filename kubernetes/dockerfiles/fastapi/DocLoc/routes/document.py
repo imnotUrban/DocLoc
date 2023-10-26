@@ -10,6 +10,10 @@ document = APIRouter()
 queryEngine = GPTQueryEngine()
 geoloc = Geocoding()
 
+@document.get("/healthz")
+async def test():
+    return "Ok"
+
 @document.post("/geolocalize")
 async def create_documents(document: List[Document]):
     
