@@ -64,6 +64,7 @@ class Document(BaseModel):
         try:
             result = conn.execute(documents.select().where(documents.c.title == self.title)).fetchone()
             if result is not None:
+                #TODO: Arreglar este return
                 document = {"title": result[1], "text": result[2], "date":result[3], "url":result[4], "lat":result[7], "lng":result[8]}
                 return document
             else: 
