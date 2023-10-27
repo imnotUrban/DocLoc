@@ -15,7 +15,7 @@ gmaps = googlemaps.Client(key=key)
 
 @dataclass
 class Geocoding:
-    coordinates = [] # json
+    coordinates = []
     
     def make_doc(self, location, lat, lng):
         return { "date": str(datetime.now()), "location": location, "lat": lat, "lng": lng}
@@ -24,6 +24,7 @@ class Geocoding:
     def getCoordinates(self, document) -> json:
         location = document['location']
         cached_location = CacheDocument(location=location).checkInCache()
+        print(cached_location)
         if cached_location is None:
             try: 
                 geocode_result = gmaps.geocode(location)      
@@ -39,9 +40,9 @@ class Geocoding:
             except Exception as e:
                 raise Exception(f"Algo ha salido mal obteniendo las coordenadas: {str(e)}")
         else:
-            coordinate = self.make_doc(location=cached_location[0]["location"], lat=cached_location[0]["lat"], lng=cached_location[0]["lng"])
+            coordinate = self.make_doc(location=cached_location["location"], lat=cached_location["lat"], lng=cached_location["lng"])
             self.coordinates.append(coordinate)
-        geoResult = self.coordinates
+        geoResult = self.coordinates[0]
         self.coordinates = []
         return geoResult
         

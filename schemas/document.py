@@ -23,8 +23,8 @@ class Document(BaseModel):
             conn.commit()
             self.id = result.inserted_primary_key[0]
             print("Agregado correctamente")
-        except Exception:
-            raise Exception("No se ha podido crear el objeto documento")
+        except Exception as e:
+            raise Exception(f"No se ha podido crear el objeto documento {str(e)}")
     
     def updateDocState(self, docState : int):
         try:
@@ -46,8 +46,8 @@ class Document(BaseModel):
         self.summary = summary
         try:
             conn.execute(documents.update().where(documents.c.id == self.id).values(summary=self.summary))
-            print("Resumen actualizado")
             conn.commit()
+            print("Resumen actualizado")
         except Exception as e:
             raise Exception(f"No se ha podido actualizar el resumen: {str(e)}")
         
@@ -57,8 +57,8 @@ class Document(BaseModel):
         self.lng = docLng 
         try:
             conn.execute(documents.update().where(documents.c.id == self.id).values(location=self.location, lat=self.lat, lng=self.lng))
-            print("Documento actualizado correctamente")
             conn.commit()
+            print("Documento actualizado correctamente")
         except Exception as e:
             raise Exception(f"No se ha podido actualizar la Latitud o longitud del documento: {str(e)}")
         
@@ -66,9 +66,7 @@ class Document(BaseModel):
         try:
             result = conn.execute(documents.select().where(documents.c.title == self.title)).fetchone()
             if result is not None:
-                #TODO: Arreglar este return
-                document = {"title": result[1], "text": result[2], "date": result[3], "url": result[4], "summary": result[7], "location": result[6], "lat":result[8], "lng": result[9]}
-                return document
+                return {"title": result[1], "text": result[2], "date": result[3], "url": result[4], "summary": result[6], "location": result[7], "lat":result[8], "lng": result[9]}
             else: 
                 return None
         except Exception as e:

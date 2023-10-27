@@ -1,10 +1,7 @@
 from sqlalchemy import Date, and_  #Define subrutas o rutas por separado
-from config.db import engine
-from sqlalchemy.orm import sessionmaker
+from config.db import conn
 from models.document import documents
 
-Session = sessionmaker(bind=engine)
-conn = Session()
 
 def get_all():
    return conn.query(documents).all()

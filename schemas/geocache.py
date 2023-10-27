@@ -21,9 +21,9 @@ class CacheDocument():
     def checkInCache(self):
         print(f"Buscando en cahe: {self.location}")
         row = conn.execute(geocache_table.select().where(geocache_table.c.location == self.location)).fetchone()
+        conn.commit()
         if row:
-            cached_location = [{"location_id": row[0], "location": row[1], "lat": row[2], "lng": row[3]}]
-            return cached_location
+            return {"location_id": row[0], "location": row[1], "lat": row[2], "lng": row[3]}
         else:
             return None
 

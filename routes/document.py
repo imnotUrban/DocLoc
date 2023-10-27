@@ -15,7 +15,7 @@ async def create_documents(document: List[Document]):
     if(len(document) > MAXDOCUMENTS):
         raise HTTPException(status_code=406, detail="Se permite un máximo de 1 documento a procesar por petición")
     elif(len(document) == 0):
-        raise HTTPException(status_code=406, detail="debe enviar al menos un documento")
+        raise HTTPException(status_code=406, detail="Debe enviar al menos un documento")
 
     try:
         doc =  document[0]
@@ -23,19 +23,16 @@ async def create_documents(document: List[Document]):
         if result is not None:
             return result
         doc.saveDocin()
-        doc.updateDocState(1)
+        doc.updateDocState(1) # Se guardo
     
         GPTResult = queryEngine.query(doc.text)
-        doc.updateSummary(GPTResult["data"][0]["summary"])
-        doc.updateDocState(2)
+        doc.updateSummary(GPTResult["data"]["summary"])
+        doc.updateDocState(2) # Se obtuvo resumen y ubicación
 
-        geoResult = geoloc.getCoordinates(GPTResult["data"][0])
-        location = geoResult[0]['location']
-        lat = geoResult[0]['lat']
-        lng = geoResult[0]['lng'] 
-        doc.updateDocLocLatLng(location, lat, lng)
-        doc.updateDocState(3) # Documento procesado correctamente
+        geoResult = geoloc.getCoordinates(GPTResult["data"])
+        doc.updateDocLocLatLng(geoResult['location'], geoResult['lat'], geoResult['lng'])
+        doc.updateDocState(3) # Se obtuvo lat y lng
 
         return doc.geolocalized()
     except Exception as e:
-        raise HTTPException(status_code=422, detail=f"Ha habido un error al ingresar el documento, intente seguir el formato indicado en la documentación {e}")
+        raise HTTPException(status_code=422, detail=f"Ha habido un error al ingresar el documento, intente seguir el formato indicado en la documentación {str(e)}")
