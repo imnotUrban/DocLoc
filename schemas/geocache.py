@@ -14,7 +14,7 @@ class CacheDocument():
         self.lng = lng
 
     def saveCache(self):
-        newDocument = {"location" : self.location, "lat": self.lat, "lng": self.lng}
+        newDocument = {"location": self.location, "lat": self.lat, "lng": self.lng}
         conn.execute(geocache_table.insert().values(newDocument))
         conn.commit()
         
