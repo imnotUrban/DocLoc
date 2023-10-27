@@ -12,7 +12,6 @@ geoloc = Geocoding()
 
 @document.post("/geolocalize")
 async def create_documents(document: List[Document]):
-    
     if(len(document) > MAXDOCUMENTS):
         raise HTTPException(status_code=406, detail="Se permite un máximo de 1 documento a procesar por petición")
     elif(len(document) == 0):
@@ -39,4 +38,4 @@ async def create_documents(document: List[Document]):
 
         return doc.geolocalized()
     except Exception as e:
-        raise HTTPException(status_code=422, detail="Ha habido un error al ingresar el documento, intente seguir el formato indicado en la documentación")
+        raise HTTPException(status_code=422, detail=f"Ha habido un error al ingresar el documento, intente seguir el formato indicado en la documentación {e}")

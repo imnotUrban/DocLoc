@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from datetime import datetime
 from config.db import conn
 from models.document import documents
 
@@ -16,6 +17,7 @@ class Document(BaseModel):
     
     def saveDocin(self):
         try:
+            self.date = datetime.strptime(self.date, "%B %d, %Y @ %H:%M:%S.%f").strftime("%d-%m-%Y")
             newDocument = {"title" : self.title, "text": self.text, "date": self.date, "url":self.url, "state": 0}
             result = conn.execute(documents.insert().values(newDocument))
             conn.commit()
@@ -65,7 +67,7 @@ class Document(BaseModel):
             result = conn.execute(documents.select().where(documents.c.title == self.title)).fetchone()
             if result is not None:
                 #TODO: Arreglar este return
-                document = {"title": result[1], "text": result[2], "date":result[3], "url":result[4], "lat":result[7], "lng":result[8]}
+                document = {"title": result[1], "text": result[2], "date": result[3], "url": result[4], "summary": result[7], "location": result[6], "lat":result[8], "lng": result[9]}
                 return document
             else: 
                 return None
@@ -73,7 +75,7 @@ class Document(BaseModel):
             raise Exception(f"No se ha podido verificar la existencia del título: {str(e)}")
 
     def geolocalized(self):
-        return {"date": self.date, "summary": self.summary, "location": self.location, "lat": self.lat, "lng": self.lng}
+        return {"title": self.title, "text": self.text, "date": self.date, "url": self.url, "summary": self.summary, "location": self.location, "lat":self.lat, "lng": self.lng}
 
 class Config:
     orm_mode = True

@@ -42,6 +42,6 @@ class Geocoding:
             coordinate = self.make_doc(location=cached_location[0]["location"], lat=cached_location[0]["lat"], lng=cached_location[0]["lng"])
             self.coordinates.append(coordinate)
         geoResult = self.coordinates
-        self.coordinates.clear()
+        self.coordinates = []
         return geoResult
         
