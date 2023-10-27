@@ -15,55 +15,34 @@ gmaps = googlemaps.Client(key=key)
 
 @dataclass
 class Geocoding:
-    locations = [] # list
-    coordinates = [] # json
+    coordinates = []
     
-    def checkInCache(self, location: str) -> json:
-        row = conn.execute(geocache_table.select().where(geocache_table.c.location == location)).fetchone()
-        if row:
-            locationMatch = [{ "location_id": row[0],"location": row[1], "lat":row[2], "lng": row[3]}]
-            return locationMatch
-        else:
-            return []
-        
-    # Obtener las location entrantes, para obtener: lat y lng
-    def getLocations(self, documents) -> list:
-        for document in documents:
-          self.locations.append(document["location"])
-        return self.locations
-
     def make_doc(self, location, lat, lng):
-        return { "date": str(datetime.now()), # Tiempo de actualizacion
-                "location": location,
-                "lat": lat,
-                "lng": lng
-                }
+        return { "date": str(datetime.now()), "location": location, "lat": lat, "lng": lng}
 
     # Obtiene lat y lng del documento entrante. # TODO:(máx 10)
-    def getCoordinates(self, documents) -> json:
-        self.getLocations(documents)
-        for place in self.locations:
-            locationMatch = self.checkInCache(place) # esto da error parece
-            if (len(locationMatch) == 0):
-                geocode_result = gmaps.geocode(place)
-                location = place
+    def getCoordinates(self, document) -> json:
+        location = document['location']
+        cached_location = CacheDocument(location=location).checkInCache()
+        print(cached_location)
+        if cached_location is None:
+            try: 
+                geocode_result = gmaps.geocode(location)      
                 if geocode_result == []:
                     lat = " "
                     lng = " "
                 else:
                     lat = str(geocode_result[0]["geometry"]["location"]["lat"])
                     lng = str(geocode_result[0]["geometry"]["location"]["lng"]) 
-                coordinate =  self.make_doc(location=location, lat=lat, lng=lng)
+                coordinate = self.make_doc(location=location, lat=lat, lng=lng)
                 self.coordinates.append(coordinate)
-                temp = CacheDocument(location = location, lat = lat, lng = lng)
-                temp.saveCache()
-                
-            else:
-                match = locationMatch[0]
-                coordinate =  self.make_doc(location=match["location"], lat=match["lat"], lng=match["lng"])
-                self.coordinates.append(coordinate)
-        geoResult = self.coordinates
-        self.locations = []
+                CacheDocument(location=location, lat=lat, lng=lng).saveCache()
+            except Exception as e:
+                raise Exception(f"Algo ha salido mal obteniendo las coordenadas: {str(e)}")
+        else:
+            coordinate = self.make_doc(location=cached_location["location"], lat=cached_location["lat"], lng=cached_location["lng"])
+            self.coordinates.append(coordinate)
+        geoResult = self.coordinates[0]
         self.coordinates = []
         return geoResult
         

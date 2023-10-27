@@ -1,9 +1,9 @@
 import os
 import json
 import openai
-# load env variables
 from dotenv import load_dotenv
 load_dotenv(dotenv_path="../.env")
+
 openai.api_key = "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"
 class GPTQueryEngine:
     def __init__(self):
@@ -13,16 +13,11 @@ class GPTQueryEngine:
     def __getSystem(self):
         #TODO #2 pasar a archivo de config
         return '''
-A location is a term that is spatial, geographic, real-world, either natural or man-made, addressable, cartographic, navigable, observable, and existing in the tangible physical realm.
-Specify what a location is NOT by excluding the terms temporal, non-terrestrial, non-spatial, individuals, companies, organizations, and fictional locations.
-Task: Extract information and analyze the text to create a JSON while ensuring that non-valid locations are not included under any circumstance.
-Instructions:
-1. Extract information from locations following the format 'Street, City, Region, Country' (e.g., Barrio San Martín, Buenos Aires, Argentina; Carrera 7 #789, Bogotá, Colombia). Locations should be filled in from left to right.
-2. The extracted information should be in Spanish.
-3. Create a JSON with the following fields: location and summary.
-4. Absolutely do not include non-valid locations. Only include geographically valid and precise locations. Exclude temporal, non-terrestrial, non-spatial, individuals, companies, organizations, fictional locations. Exclude general terms like 'Hotel', 'Hospital', 'Carretera', 'Autopista' and exclude vague locations like 'tv shows' or 'radio station'
-5. The summary should relate to the relevant event at the location and be brief.
-Remember locations represent real places or regions.
+    Extract information from a location following the format 'Street, City, Region, Country' (e.g., Plaza de Mayo, Buenos Aires, Argentina; Paseo de la Reforma, Mexico City, Mexico).
+    The extracted information should be in Spanish.
+    Create a JSON with the following fields: location and summary.
+    Absolutely do not include non-valid locations. Only include geographically valid and precise locations. Exclude temporal, non-terrestrial, non-spatial, individuals, companies, organizations, fictional locations. Exclude general terms like 'Hotel', 'Hospital', 'Carretera', 'Autopista' and exclude vague locations like 'tv shows' or 'radio station'.
+    The summary should relate to the relevant event at the location and be brief. Remember, the location represents a real place or region.
 '''
     def __getMessages(self,new: str) -> list:
         return [
@@ -39,22 +34,19 @@ Remember locations represent real places or regions.
         "type": "object",
         "properties": {
             "data": {
-                "type": "array",
-                "items": {
-                    "type": "object",
-                    "properties": {
-                        "location": {
-                            "type": "string",
-                            "description": "the address in address format: 'street, city, region, country'"
-                        },
-                        "summary": {
-                            "type": "string",
-                            "description": "The event relevant to location"
-                        }
+                "type": "object",
+                "properties": {
+                    "location": {
+                        "type": "string",
+                        "description": "the address in address format: 'street, city, region, country'"
                     },
-                    "required": ["location", "summary"],
-                    "additionalProperties": False
-                }
+                    "summary": {
+                        "type": "string",
+                        "description": "The event relevant to location"
+                    }
+                },
+                "required": ["location", "summary"],
+                "additionalProperties": False
             }
         },
         "required": ["data"]

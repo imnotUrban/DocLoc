@@ -1,6 +1,8 @@
-*/__pycache__
+./**/__pycache__
+__pycache__
+Rabbit
 .env
-local.env
-routes/__pycache__/document.cpython-311.pyc
-config/__pycache__/db.cpython-311.pyc
-__pycache__/main.cpython-311.pyc
+doc.json
+noticias.json
+test.py
+test.ipynb

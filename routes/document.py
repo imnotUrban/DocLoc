@@ -12,23 +12,27 @@ geoloc = Geocoding()
 
 @document.post("/geolocalize")
 async def create_documents(document: List[Document]):
-    
     if(len(document) > MAXDOCUMENTS):
         raise HTTPException(status_code=406, detail="Se permite un máximo de 1 documento a procesar por petición")
     elif(len(document) == 0):
-        raise HTTPException(status_code=406, detail="debe enviar al menos un documento")
+        raise HTTPException(status_code=406, detail="Debe enviar al menos un documento")
 
     try:
-        
-        for doc in document:
-            doc.saveDocin()
+        doc =  document[0]
+        result = doc.exists()
+        if result is not None:
+            return result
+        doc.saveDocin()
+        doc.updateDocState(1) # Se guardo
+    
+        GPTResult = queryEngine.query(doc.text)
+        doc.updateSummary(GPTResult["data"]["summary"])
+        doc.updateDocState(2) # Se obtuvo resumen y ubicación
 
-            GPTResult = queryEngine.query(doc.text)
-            doc.updateDocState(1)
+        geoResult = geoloc.getCoordinates(GPTResult["data"])
+        doc.updateDocLocLatLng(geoResult['location'], geoResult['lat'], geoResult['lng'])
+        doc.updateDocState(3) # Se obtuvo lat y lng
 
-            geoResult = geoloc.getCoordinates(GPTResult["data"])
-            doc.updateDocState(2)
-
-        return geoResult
+        return doc.geolocalized()
     except Exception as e:
-        raise HTTPException(status_code=422, detail="Ha habido un error al ingresar el documento, intente seguir el formato indicado en la documentación")
+        raise HTTPException(status_code=422, detail=f"Ha habido un error al ingresar el documento, intente seguir el formato indicado en la documentación {str(e)}")

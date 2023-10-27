@@ -1,20 +1,32 @@
-from pydantic import BaseModel
 from config.db import conn
 from models.geocache import geocache_table
 
-class CacheDocument(BaseModel):
-    location_id: int = None
+class CacheDocument():
+    location_id: int
     location: str
-    lat: str = None
-    lng: str = None
+    lat: str
+    lng: str
     
+    def __init__(self, location_id=None ,location=None, lat=None, lng=None):
+        self.location_id = location_id
+        self.location = location
+        self.lat = lat
+        self.lng = lng
+
     def saveCache(self):
-        newDocument = {"location" : self.location, "lat": self.lat, "lng": self.lng}
-        conn.execute(geocache_table
-                        .insert()
-                        .values(newDocument))
+        newDocument = {"location": self.location, "lat": self.lat, "lng": self.lng}
+        conn.execute(geocache_table.insert().values(newDocument))
         conn.commit()
-    
+        
+    def checkInCache(self):
+        print(f"Buscando en cahe: {self.location}")
+        row = conn.execute(geocache_table.select().where(geocache_table.c.location == self.location)).fetchone()
+        conn.commit()
+        if row:
+            return {"location_id": row[0], "location": row[1], "lat": row[2], "lng": row[3]}
+        else:
+            return None
+
     def print(self):
         print(f"{self.location_id};{self.location};{self.lat};{self.lng}")
 
