@@ -1,7 +1,4 @@
 import httpx
-import random
-import pandas as pd
-import time
 import json
 import asyncio
 
@@ -21,7 +18,7 @@ with open('noticias.json', 'r') as jf:
     noticias = json.load(jf)
 
 async def send():
-    for noticia in noticias:
+    for noticia in noticias[68:]:
         await enviar_documentos([noticia])
         await asyncio.sleep(15)
 

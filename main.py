@@ -10,6 +10,7 @@ app.include_router(document)
 def get_news():
    return get_all()
 
+## DD-MM-AAAA
 @app.get("/api/news/date/", response_model=list[Document])
 def get_news(from_: str, to_= str):
    return get_by_date(from_ = from_, to_ = to_)
