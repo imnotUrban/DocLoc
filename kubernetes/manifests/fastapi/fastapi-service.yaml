@@ -4,7 +4,7 @@ metadata:
   name: fastapi-service
 spec:
   selector:
-    app: fastapi-deployment  # Match pods with the 'app: fastapi' label
+    app: fastapi # Match pods with the 'app: fastapi' label
   ports:
     - protocol: TCP
       port: 5001  # Port to access the FastAPI application
