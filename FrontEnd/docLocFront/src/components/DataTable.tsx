@@ -1,7 +1,77 @@
 import { MinusIcon } from '@chakra-ui/icons'
-import { Box ,Tr,Th,Table,TableCaption,TableContainer,Text, Thead, Tbody, Td, Tfoot, Checkbox, Grid, Select, GridItem, Button} from '@chakra-ui/react'
-import React from 'react'
-export const DataTable = () => {
+import { Box ,Tr,Th,Table,TableCaption,TableContainer,Text, Thead, Tbody, Td, Tfoot, Checkbox, Grid, Select, GridItem, Button, CircularProgress} from '@chakra-ui/react'
+import { getAllNews } from '../services/api'
+import React, {  useEffect, useState } from 'react'
+
+export interface locations{
+  id: number;
+  date : string;
+  title : string;
+  lat : number;
+  lng : number;
+}
+
+
+export const DataTable: React.FC = () => {
+
+  
+  
+  
+  const [selectedItems, setSelectedItems] = useState<locations[]>([]); // Lugares que se renderizarán en el mapa
+  const [news, setNews] = useState<locations[]>([]);
+  const [loading, setLoading] = useState(true); // Se usa para esperar a que se haga la consulta para que cargue la tabla
+
+
+  const handleCheckboxChange = (item: locations) => {
+    if (selectedItems.includes(item)) {
+      // Si el elemento ya está en la lista de seleccionados, quítalo
+      setSelectedItems(selectedItems.filter((selectedItem) => selectedItem !== item));
+    } else {
+      // Si el elemento no está en la lista de seleccionados, agrégalo
+      setSelectedItems([...selectedItems, item]);
+    }
+  };
+
+  const handleButtonClick = () => {
+    console.log(selectedItems); // Acá debería ir un useEffect para ver que cambió
+  }
+
+
+
+  const handleDocuments = async () => {
+
+    try{
+      const newsData = await getAllNews();
+      setNews(newsData);
+      
+    }catch(error){
+      //Mostrar un popup de error en caso de que no pueda cargar los documentos
+      //TODO
+      console.log('no cargan los docs');
+    }
+  };
+
+
+  /**
+   * Carga inicial de los documentos
+   */
+  useEffect(() => {   
+    async function fetchNews(){
+      try{
+        setTimeout(async () => {
+          const data = await getAllNews();
+          setNews(data);
+          setLoading(false);
+
+        }, 3000)
+      }catch (error){
+        setLoading(false);
+      }
+    }
+    fetchNews();
+  }, []);
+
+
   return (
     <Box bgColor={'#343434'} pt={10}>
 
@@ -33,7 +103,7 @@ export const DataTable = () => {
           <Button> Limpiar </Button>
         </GridItem>
         <GridItem>
-          <Button>Ver </Button>
+          <Button onClick={handleButtonClick}>Ver </Button>
         </GridItem>
         
       </Grid>
@@ -53,49 +123,35 @@ export const DataTable = () => {
                 <Th>LONGITUD</Th>
               </Tr>
             </Thead>
+            {loading? 
+            (
+              
+            <CircularProgress isIndeterminate color='green.300' size='12rem'/>
+            
+            )
+            :
+            
             <Tbody>
-              <Tr>
-                <Td>
-                  <Checkbox></Checkbox>
-                </Td>
-                <Td>deporte </Td>
-                <Td> 24/ 12/ 2020</Td>
-                <Td> la macha hace una maraton de 20 km</Td>
-                <Td> 15.1212338</Td>
-                <Td> 12.4949838</Td>
-              </Tr>
-              <Tr>
-                <Td>
-                  <Checkbox></Checkbox>
-                </Td>
-                <Td>deporte </Td>
-                <Td> 24/ 12/ 2020</Td>
-                <Td> la macha hace una maraton de 20 km</Td>
-                <Td> 15.1212338</Td>
-                <Td> 12.4949838</Td>
-              </Tr>
-              <Tr>
-                <Td>
-                  <Checkbox></Checkbox>
-                </Td>
-                <Td>deporte </Td>
-                <Td> 24/ 12/ 2020</Td>
-                <Td> la macha hace una maraton de 20 km</Td>
-                <Td> 15.1212338</Td>
-                <Td> 12.4949838</Td>
-              </Tr>
-              <Tr>
-                <Td>
-                  <Checkbox></Checkbox>
-                </Td>
-                <Td>deporte </Td>
-                <Td> 24/ 12/ 2020</Td>
-                <Td> la macha hace una maraton de 20 km</Td>
-                <Td> 15.1212338</Td>
-                <Td> 12.4949838</Td>
-              </Tr>
+              {news.map((item) => (
+                <Tr key={item.id}>
+                  <Td>
+                    <Checkbox checked={selectedItems.find((selectedItem) => selectedItem.id === item.id) ? true : false}
+                  onChange={() => handleCheckboxChange(item)}>
+
+                    </Checkbox>
+                  </Td>
+                  <Td>Categoría por ver</Td>
+                  <Td>{item.date}</Td>
+                  <Td>{item.title}</Td>
+                  <Td>{item.lat}</Td>
+                  <Td>{item.lng}</Td>
+                </ Tr>
+              ))}
+
               
             </Tbody>
+            }
+            
             <Tfoot>
               <Tr>
                 <Th>VER</Th>
@@ -109,8 +165,6 @@ export const DataTable = () => {
           </Table>
         </TableContainer>
       </Box>
-
-
 
 
     </Box>
