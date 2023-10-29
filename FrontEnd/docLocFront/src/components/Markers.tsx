@@ -4,8 +4,11 @@ import { Marker, Popup } from 'react-leaflet';
 
 
 interface Place {
-  name: string;
-  geometry: [number, number];
+  id: number;
+  date : string;
+  title : string;
+  lat : number;
+  lng : number;
 }
 
 interface MarkersProps {
@@ -17,10 +20,10 @@ const Markers: React.FC<MarkersProps> = (props) => {
 
   const markers = places.map((place: Place, i: number) => (
     <Marker
-      key={i}
-      position={place.geometry}
+      key={place.id}
+      position={[place.lat, place.lng]}
     >
-        <Popup>{place.name}  <br/> a </Popup>
+        <Popup> <b>{place.title} </b> <br/> <i>... cuando pepito fue a comprar pan descubrio que nunca tuvo plata ...</i> <br/> <a href='www.pepitogordo.com'> LINK A LA NOTICIA </a> </Popup>
     </Marker>
   ));
 
