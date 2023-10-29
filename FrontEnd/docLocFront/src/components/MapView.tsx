@@ -60,7 +60,7 @@ export const MapView = () => {
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
 
       <MarkerClusterGroup >
-
+{/* ss */}
         <Markers places={marcadores} />
       </MarkerClusterGroup>
       </MapContainer>
