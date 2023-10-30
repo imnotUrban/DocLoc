@@ -18,7 +18,7 @@ with open('noticias.json', 'r') as jf:
     noticias = json.load(jf)
 
 async def send():
-    for noticia in noticias[68:]:
+    for noticia in noticias[200:]:
         await enviar_documentos([noticia])
         await asyncio.sleep(15)
 
