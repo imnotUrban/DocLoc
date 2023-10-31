@@ -24,7 +24,6 @@ class Geocoding:
     def getCoordinates(self, document) -> json:
         location = document['location']
         cached_location = CacheDocument(location=location).checkInCache()
-        print(cached_location)
         if cached_location is None:
             try: 
                 geocode_result = gmaps.geocode(location)      

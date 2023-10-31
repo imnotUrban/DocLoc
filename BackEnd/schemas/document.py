@@ -19,7 +19,7 @@ class Document(BaseModel):
     def saveDocin(self):
         try:
             self.date = datetime.strptime(self.date, "%B %d, %Y @ %H:%M:%S.%f").strftime("%d-%m-%Y")
-            newDocument = {"title" : self.title, "text": self.text, "date": self.date, "url":self.url, "state": 0}
+            newDocument = {"title":self.title, "text":self.text, "date":self.date, "url":self.url, "state":self.state, "summary": self.summary, "location":self.location, "lat":self.lat, "lng":self.lng}
             result = conn.execute(documents.insert().values(newDocument))
             conn.commit()
             self.id = result.inserted_primary_key[0]
@@ -28,12 +28,13 @@ class Document(BaseModel):
             raise Exception(f"No se ha podido crear el objeto documento {str(e)}")
     
     def updateDocState(self, docState : int):
-        try:
-            conn.execute(documents.update().where(documents.c.id == self.id).values(state=docState))
-            conn.commit()
-            print("Estado actualizado correctamente")
-        except Exception as e:
-            raise Exception(f"No se ha podido actualizar el estado del documento: {str(e)}")
+        self.state = docState
+        # try:
+        #     conn.execute(documents.update().where(documents.c.id == self.id).values(state=docState))
+        #     conn.commit()
+        #     print("Estado actualizado correctamente")
+        # except Exception as e:
+        #     raise Exception(f"No se ha podido actualizar el estado del documento: {str(e)}")
 
     def updateDocResult(self, docResult : str):  
         try:
@@ -75,6 +76,9 @@ class Document(BaseModel):
 
     def geolocalized(self):
         return {"title": self.title, "text": self.text, "date": self.date, "url": self.url, "summary": self.summary, "location": self.location, "lat":self.lat, "lng": self.lng}
+
+    def __str__(self) -> str:
+        return super().__str__()
 
 class Config:
     orm_mode = True

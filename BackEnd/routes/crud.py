@@ -11,6 +11,10 @@ api = APIRouter(prefix="/api",)
 def all():
    return conn.query(documents).all()
 
+@api.get("/count")
+def count():
+   return conn.query(documents).count()
+
 # Recibe un número de página -> retorna los n elementos de la página
 @api.get("/page", response_model=List[Document])
 def page(page: int):
@@ -19,16 +23,6 @@ def page(page: int):
    start_index = (page - 1) * 10
    end_index = page * 10
    result = conn.query(documents)[start_index:end_index]
-   indexes_to_remove = []
-
-   for i, doc in enumerate(result):
-      if doc[5] in [1,2] or doc[8] == " " or doc[9] == " ": # Retonar solo las que tienen contenido
-         indexes_to_remove.append(i)
-         result += conn.query(documents)[end_index:end_index+1]
-         end_index = end_index + 1
-
-   for i in reversed(indexes_to_remove):
-      result.pop(i)
    return result
 
 # DD-MM-AAAA
