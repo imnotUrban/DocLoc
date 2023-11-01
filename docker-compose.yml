@@ -1,0 +1,32 @@
+services:
+  mariadb-service:
+    container_name: mariadb-container
+    build:
+      context: ./config
+      dockerfile: Dockerfile  
+    restart: always
+    ports:
+      - "3308:3306" # innecesario
+  
+  api-service:
+    container_name: api-container
+    build:
+      context: ./BackEnd
+      dockerfile: Dockerfile
+    restart: always
+    depends_on:
+      - mariadb-service
+    ports:
+      - "5001:5001" # Cambia el puerto si es necesario
+
+  front-service:
+    container_name: front-container
+    build:
+      context: ./FrontEnd/docLocFront
+      dockerfile: Dockerfile
+    restart: always
+    depends_on:
+      - mariadb-service
+      - api-service
+    ports:
+      - "5008:5008"
