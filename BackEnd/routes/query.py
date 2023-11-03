@@ -25,8 +25,6 @@ def filters(from_: str | None = None, to_: str | None = None, cat: str | None = 
       return query.filter(and_(documents.c.date >= from_, documents.c.date <= to_, documents.c.category == cat))[start_index:end_index]
    
    elif from_ and to_:
-      print(from_)
-      print(to_)
       return query.filter(and_(documents.c.date >= from_, documents.c.date <= to_))[start_index:end_index]
 
    elif from_ and cat:
@@ -43,5 +41,8 @@ def filters(from_: str | None = None, to_: str | None = None, cat: str | None = 
 
    elif cat: # Viene solo cat
       return query.filter(and_(documents.c.date >= default_from, documents.c.date <= default_to, documents.c.category == cat))[start_index:end_index]
+
+   else:
+      return query[start_index:end_index]
 
 
