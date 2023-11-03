@@ -1,11 +1,12 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-
 // Asegúrate de importar la interfaz o tipo locations desde donde esté definida
 import { locations } from '../components/DataTable';
 
 interface SelectedItemsContextProps {
   selectedItems: locations[];
   setSelectedItems: React.Dispatch<React.SetStateAction<locations[]>>;
+
+
 }
 
 const SelectedItemsContext = createContext<SelectedItemsContextProps | undefined>(undefined);

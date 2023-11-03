@@ -1,47 +1,84 @@
-import { MinusIcon } from '@chakra-ui/icons'
-import { Box ,Tr,Th,Table,TableCaption,TableContainer,Text, Thead, Tbody, Td, Tfoot, Checkbox, Grid, Select, GridItem, Button, CircularProgress} from '@chakra-ui/react'
-import { getAllNews } from '../services/api'
+import { ArrowLeftIcon, ArrowRightIcon, MinusIcon } from '@chakra-ui/icons'
+import { Box ,Tr,Th,Table,TableCaption,TableContainer,Text, Thead, Tbody, Td, Tfoot, Checkbox, Grid, Select, GridItem, Button, CircularProgress, ButtonGroup, Center} from '@chakra-ui/react'
+import { getNews } from '../services/api'
 import React, {  useEffect, useState } from 'react'
-
+import { useSelectedItems } from '../context/SelectedItemsContext'
 export interface locations{
   id: number;
   date : string;
   title : string;
+  url: string;
+  summary: string
   lat : number;
   lng : number;
 }
 
 
-export const DataTable: React.FC = () => {
-
+export const DataTable: React.FC = () => {  
   
-  
-  
-  const [selectedItems, setSelectedItems] = useState<locations[]>([]); // Lugares que se renderizarán en el mapa
+  const [page, setPages] = useState(1); // Se usa para paginar la página
+  const {selectedItems, setSelectedItems} = useSelectedItems();
+  const [checkItems, setCheckItems] = useState<locations[]>([]);
   const [news, setNews] = useState<locations[]>([]);
   const [loading, setLoading] = useState(true); // Se usa para esperar a que se haga la consulta para que cargue la tabla
 
-
-  const handleCheckboxChange = (item: locations) => {
-    if (selectedItems.includes(item)) {
-      // Si el elemento ya está en la lista de seleccionados, quítalo
-      setSelectedItems(selectedItems.filter((selectedItem) => selectedItem !== item));
-    } else {
-      // Si el elemento no está en la lista de seleccionados, agrégalo
-      setSelectedItems([...selectedItems, item]);
-    }
-  };
-
-  const handleButtonClick = () => {
-    console.log(selectedItems); // Acá debería ir un useEffect para ver que cambió
+  const nextPage = () => {
+    setPages(page+1);
   }
 
+  const prevPage = () => {
+    setPages(page-1);
+  }
+
+ useEffect(() => {
+ 
+   return () => {
+     console.log('Se actualiza el arreglo de puntos en el mapa')
+   }
+ }, [selectedItems])
+ 
+
+ const handleCleanButton = () => {
+  setCheckItems([]);
+  setSelectedItems([]);
+
+ };
 
 
-  const handleDocuments = async () => {
+
+ const handleCheckboxChange = (item: locations) => {
+  // Verificar si el elemento ya está en checkItems
+  const exists = checkItems.find((checkItem) => checkItem.id === item.id);
+
+  if (exists) {
+    // Si el elemento ya está en la lista de seleccionados, quítalo
+    setCheckItems(checkItems.filter((checkItem) => checkItem.id !== item.id));
+    
+  } else {
+    // Si el elemento no está en la lista de seleccionados, agrégalo
+    setCheckItems([...checkItems, item]);
+  }
+};
+
+
+  const handleVerButtonClick = () => {
+    setSelectedItems([...checkItems])
+  }
+
+  useEffect(() => {
+    
+    console.log(checkItems)
+    return () => {
+      console.log('checkItems' )
+    }
+  }, [checkItems])
+  
+
+
+  const handleDocuments = async (page: number) => {
 
     try{
-      const newsData = await getAllNews();
+      const newsData = await getNews(page);
       setNews(newsData);
       
     }catch(error){
@@ -59,17 +96,47 @@ export const DataTable: React.FC = () => {
     async function fetchNews(){
       try{
         setTimeout(async () => {
-          const data = await getAllNews();
+          const data = await getNews(page);
           setNews(data);
           setLoading(false);
 
-        }, 3000)
+        }, )
       }catch (error){
         setLoading(false);
       }
     }
     fetchNews();
   }, []);
+  useEffect(() => {   
+    async function fetchNews(){
+      try{
+        setTimeout(async () => {
+          const data = await getNews(page);
+          setNews(data);
+          setLoading(false);
+
+        }, 0 ) //3000
+      }catch (error){
+        setLoading(false);
+      }
+    }
+    fetchNews();
+  }, [page]);
+  useEffect(() => {   
+    async function fetchNews(){
+      try{
+        setTimeout(async () => {
+          const data = await getNews(page);
+          setNews(data);
+          setLoading(false);
+
+        }, 0 ) //3000
+      }catch (error){
+        setLoading(false);
+      }
+    }
+    fetchNews();
+  }, [loading]);
 
 
   return (
@@ -100,10 +167,11 @@ export const DataTable: React.FC = () => {
           <Button> FILTRAR </Button>
         </GridItem>
         <GridItem>
-          <Button> Limpiar </Button>
+          <Button onClick={handleCleanButton}
+          > Limpiar </Button>
         </GridItem>
         <GridItem>
-          <Button onClick={handleButtonClick}>Ver </Button>
+          <Button onClick={handleVerButtonClick}>Ver </Button>
         </GridItem>
         
       </Grid>
@@ -125,48 +193,56 @@ export const DataTable: React.FC = () => {
             </Thead>
             {loading? 
             (
-              
             <CircularProgress isIndeterminate color='green.300' size='12rem'/>
-            
             )
             :
             
             <Tbody>
-              {news.map((item) => (
-                <Tr key={item.id}>
-                  <Td>
-                    <Checkbox checked={selectedItems.find((selectedItem) => selectedItem.id === item.id) ? true : false}
-                  onChange={() => handleCheckboxChange(item)}>
-
-                    </Checkbox>
-                  </Td>
-                  <Td>Categoría por ver</Td>
-                  <Td>{item.date}</Td>
-                  <Td>{item.title}</Td>
-                  <Td>{item.lat}</Td>
-                  <Td>{item.lng}</Td>
-                </ Tr>
-              ))}
-
-              
-            </Tbody>
+      {news.map((item) => (
+        <Tr key={item.id}>
+          <Td>
+            <Checkbox
+              isChecked={checkItems.some((selectedItem) => selectedItem.id === item.id)}
+              onChange={() => handleCheckboxChange(item)}
+            />
+      </Td>
+      <Td>Categoría por ver</Td>
+      <Td>{item.date}</Td>
+      <Td>{item.title}</Td>
+      <Td>{item.lat}</Td>
+      <Td>{item.lng}</Td>
+    </Tr>
+  ))
+  
+  
+  }
+</Tbody>
             }
             
             <Tfoot>
-              <Tr>
-                <Th>VER</Th>
-                <Th>CATEGORÍA</Th>
-                <Th>FECHA</Th>
-                <Th>TÍTULO</Th>
-                <Th>LATITUD</Th>
-                <Th>LONGITUD</Th>
-              </Tr>
+              
             </Tfoot>
           </Table>
         </TableContainer>
       </Box>
 
+      <Center>
 
+        <ButtonGroup  mt={'3'} >
+          <Button leftIcon={<ArrowLeftIcon />} onClick={prevPage}>
+            Anterior
+          </Button>
+          <Center w='40px' h='40px' bg='tomato' color='white'>
+            <Box as='span' fontWeight='bold' fontSize='lg'>
+              {page}
+            </Box>
+          </Center>
+          <Button leftIcon={<ArrowRightIcon />} onClick={nextPage} >
+            Siguiente
+          </Button>
+        </ButtonGroup>
+
+      </Center>
     </Box>
   )
 }

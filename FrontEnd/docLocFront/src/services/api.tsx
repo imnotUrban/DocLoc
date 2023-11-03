@@ -1,8 +1,8 @@
 
 //PONER EN .ENV
-export async function getAllNews() {
+export async function getNews(page: number) {
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/news/all');
+      const response = await fetch(`http://127.0.0.1:8000/api/news/page/?page=${page}`);
       if (!response.ok) {
         throw new Error('La solicitud a la API no fue exitosa.');
       }

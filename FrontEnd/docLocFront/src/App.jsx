@@ -9,11 +9,9 @@ import { SelectedItemsProvider } from './context/SelectedItemsContext'
 export const App = () => {
   return (
     <div>
-      <SelectedItemsProvider>
         <Header />
         <MapView />
         <DataTable />
-      </SelectedItemsProvider>
     </div>
   )
 }

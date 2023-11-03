@@ -13,6 +13,8 @@ def all():
 # Recibe un número de página -> retorna los n elementos de la página
 @api.get("/news/page/", response_model=list[Document])
 def page(page: int):
+    if(page< 1):
+       page =1
     start_index = (page - 1) * 10
     end_index = page * 10
     result = conn.query(documents)[start_index:end_index]
