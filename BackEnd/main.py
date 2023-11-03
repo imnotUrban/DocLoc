@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from routes.document import document
-from routes.crud import api
+from routes.query import api
 from schemas.document import Document
 
 app = FastAPI()

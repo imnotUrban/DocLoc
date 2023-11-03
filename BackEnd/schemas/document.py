@@ -9,6 +9,7 @@ class Document(BaseModel):
     title: str
     text: str
     date: str
+    category: str
     url: str
     state: int | None = None 
     summary: str | None = None
@@ -18,8 +19,8 @@ class Document(BaseModel):
     
     def saveDocin(self):
         try:
-            self.date = datetime.strptime(self.date, "%B %d, %Y @ %H:%M:%S.%f").strftime("%d-%m-%Y")
-            newDocument = {"title":self.title, "text":self.text, "date":self.date, "url":self.url, "state":self.state, "summary": self.summary, "location":self.location, "lat":self.lat, "lng":self.lng}
+            self.date = datetime.strptime(self.date, "%b %d, %Y @ %H:%M:%S.%f").strftime("%Y-%m-%d")
+            newDocument = {"title":self.title, "text":self.text, "date":self.date, "category":self.category, "url":self.url, "state":self.state, "summary": self.summary, "location":self.location, "lat":self.lat, "lng":self.lng}
             result = conn.execute(documents.insert().values(newDocument))
             conn.commit()
             self.id = result.inserted_primary_key[0]
@@ -29,12 +30,6 @@ class Document(BaseModel):
     
     def updateDocState(self, docState : int):
         self.state = docState
-        # try:
-        #     conn.execute(documents.update().where(documents.c.id == self.id).values(state=docState))
-        #     conn.commit()
-        #     print("Estado actualizado correctamente")
-        # except Exception as e:
-        #     raise Exception(f"No se ha podido actualizar el estado del documento: {str(e)}")
 
     def updateDocResult(self, docResult : str):  
         try:
@@ -68,14 +63,14 @@ class Document(BaseModel):
         try:
             result = conn.execute(documents.select().where(documents.c.title == self.title)).fetchone()
             if result is not None:
-                return {"title": result[1], "text": result[2], "date": result[3], "url": result[4], "summary": result[6], "location": result[7], "lat":result[8], "lng": result[9]}
+                return {"title":result[1], "text":result[2], "date":result[3], "category":result[4], "url":result[5], "summary":result[8], "location":result[8], "lat":result[9], "lng":result[10]}
             else: 
                 return None
         except Exception as e:
             raise Exception(f"No se ha podido verificar la existencia del título: {str(e)}")
 
     def geolocalized(self):
-        return {"title": self.title, "text": self.text, "date": self.date, "url": self.url, "summary": self.summary, "location": self.location, "lat":self.lat, "lng": self.lng}
+        return {"title":self.title, "text":self.text, "date":self.date, "category":self.category, "url":self.url, "summary":self.summary, "location":self.location, "lat":self.lat, "lng":self.lng}
 
     def __str__(self) -> str:
         return super().__str__()

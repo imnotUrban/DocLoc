@@ -7,6 +7,7 @@ documents = Table("documents", meta, Column(
     Column("title", String(255),nullable = False), 
     Column("text", Text,nullable = False),
     Column("date", String(255),nullable = False),
+    Column("category", String(255),nullable = False),
     Column("url", String(255),nullable = False),
     Column("state", Integer,nullable = False),
     Column("summary", Text),
