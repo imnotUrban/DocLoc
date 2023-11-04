@@ -1,3 +1,4 @@
+import { Card, CardBody, CardHeader, Heading, Text, CardFooter, Button } from '@chakra-ui/react';
 import React from 'react';
 import { Marker, Popup } from 'react-leaflet';
 
@@ -27,7 +28,20 @@ const Markers: React.FC<MarkersProps> = (props) => {
       key={place.id}
       position={[place.lat, place.lng]}
     >
-        <Popup> <b>{place.title} </b> <br/> <i>...{place.summary}...</i> <br/> <a href={place.url} target='blank'> LINK A LA NOTICIA </a> </Popup>
+        <Popup > 
+          <Card bgColor={'white'} color='black' align='center'>
+            <CardHeader>
+              <Heading size='xs'> {place.title} </Heading>
+            </CardHeader>
+            <CardBody>
+              <Text>...{place.summary}...</Text>
+            </CardBody>
+            <CardFooter>
+              <Button  ><a href={place.url}> Origen </a></Button>
+            </CardFooter>
+
+          </Card>
+        </Popup>
     </Marker>
   ));
 

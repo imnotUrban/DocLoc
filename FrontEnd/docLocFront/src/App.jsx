@@ -4,15 +4,16 @@ import { MapView } from './components/MapView'
 import './App.css'
 import { DataTable } from './components/DataTable'
 import { SelectedItemsProvider } from './context/SelectedItemsContext'
+import { Box } from '@chakra-ui/react'
 
 
 export const App = () => {
   return (
-    <div>
+    <Box>
         <Header />
         <MapView />
         <DataTable />
-    </div>
+    </Box>
   )
 }
 

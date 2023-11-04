@@ -1,8 +1,10 @@
 import { ArrowLeftIcon, ArrowRightIcon, MinusIcon } from '@chakra-ui/icons'
-import { Box ,Tr,Th,Table,TableCaption,TableContainer,Text, Thead, Tbody, Td, Tfoot, Checkbox, Grid, Select, GridItem, Button, CircularProgress, ButtonGroup, Center} from '@chakra-ui/react'
+import {  Box ,Tr,Th,Table,TableCaption,TableContainer,Text, Thead, Tbody, Td, Tfoot, Checkbox, Grid, Select, GridItem, Button, CircularProgress, ButtonGroup, Center, ColorModeContext} from '@chakra-ui/react'
 import { getNews } from '../services/api'
 import React, {  useEffect, useState } from 'react'
 import { useSelectedItems } from '../context/SelectedItemsContext'
+import '../styles/table.css'
+
 export interface locations{
   id: number;
   date : string;
@@ -191,15 +193,15 @@ export const DataTable: React.FC = () => {
 
 
   return (
-    <Box bgColor={'#343434'} pt={10}>
+    <Box pt={10}>
 
-      <Text fontSize='2xl' color='#f2f2f2' fontFamily='Mukta Vaani' fontWeight='400' px={'10%'}> 
+      <Text fontSize='2xl' className='TableTitle' fontFamily='Mukta Vaani' fontWeight='400' px={'10%'}> 
         <MinusIcon color={'#44cfe2'}/>  DOCUMENTOS DISPONIBLES PARA VISUALIZAR 
       </Text>
 
-      <Grid px={'10%'} py='2%' templateColumns='repeat(6, 1fr)' gap={7}>
+      <Grid px={'10%'} py='2%' templateColumns='repeat(7, 1fr)' gap={7}>
         <GridItem>
-          <Text fontSize='l' fontFamily='Mukta Vaani' fontWeight='400' color='white'>Categoría</Text>
+          <Text fontSize='l' fontFamily='Mukta Vaani' fontWeight='400'>Categoría</Text>
           <Select id='CategorySelect' placeholder='Categoría' value={category} onChange={handleCategoriaChange}>
             <option value='entretenimiento'>Entretenimiento</option>
             <option value='tecnologia'>Tecnología</option>
@@ -217,7 +219,7 @@ export const DataTable: React.FC = () => {
           </Select>
         </GridItem>
         <GridItem>
-        <Text fontSize='l' fontFamily='Mukta Vaani' fontWeight='400' color='white'>Desde</Text>
+        <Text fontSize='l' fontFamily='Mukta Vaani' fontWeight='400' >Desde</Text>
         <input
           type="date"
           name="trip-start"
@@ -229,7 +231,7 @@ export const DataTable: React.FC = () => {
       </GridItem>
 
       <GridItem>
-        <Text fontSize='l' fontFamily='Mukta Vaani' fontWeight='400' color='white'>Hasta</Text>
+        <Text fontSize='l' fontFamily='Mukta Vaani' fontWeight='400' >Hasta</Text>
         <input
           type="date"
           name="trip-start"
@@ -245,7 +247,7 @@ export const DataTable: React.FC = () => {
         </GridItem>
         <GridItem>
           <Button onClick={handleCleanButton}
-          > Limpiar </Button>
+          > Limpiar Mapa </Button>
         </GridItem>
         <GridItem>
           <Button onClick={handleVerButtonClick}>Ver </Button>
@@ -258,8 +260,8 @@ export const DataTable: React.FC = () => {
       
       <Box  pr={'10%'} pl={'10%'}>
 
-        <TableContainer bgColor='#f2f2f2'>
-          <Table variant='striped' colorScheme='teal'>
+        <TableContainer border='2px' borderRadius='3'>
+        <Table  variant="striped" colorScheme={"teal"} >
             <TableCaption>Documentos geolocalizables</TableCaption>
             <Thead>
               <Tr>
@@ -314,12 +316,12 @@ export const DataTable: React.FC = () => {
           <Button leftIcon={<ArrowLeftIcon />} onClick={prevPage}>
             Anterior
           </Button>
-          <Center w='40px' h='40px' bg='tomato' color='white'>
+          <Center w='40px' h='40px'  _dark={{color:'white'}}>
             <Box as='span' fontWeight='bold' fontSize='lg'>
               {page}
             </Box>
           </Center>
-          <Button leftIcon={<ArrowRightIcon />} onClick={nextPage} >
+          <Button rightIcon={<ArrowRightIcon />} onClick={nextPage} >
             Siguiente
           </Button>
         </ButtonGroup>
