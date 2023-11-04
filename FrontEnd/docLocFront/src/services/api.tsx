@@ -5,7 +5,7 @@ export async function getNews(page: number = 1, fromDate: string = '', toDate: s
       url += `&cat=${category}`;
     }
     if (fromDate !== '') {
-      url += `&from=${fromDate}`;
+      url += `&from_=${fromDate}`;
     }
     
     if (toDate !== '') {
