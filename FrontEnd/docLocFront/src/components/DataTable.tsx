@@ -26,7 +26,6 @@ export const DataTable: React.FC = () => {
   const [loading, setLoading] = useState(true); // Se usa para esperar a que se haga la consulta para que cargue la tabla
   const [category, setCategory] = useState('');
   const [filterSort, setFilterSort] = useState(false);
-
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
 
@@ -135,7 +134,7 @@ export const DataTable: React.FC = () => {
       try{
         setTimeout(async () => {
           const data = await getNews(page, fromDate,toDate,category);
-          setNews(data);
+          setNews(data.doc);
           setLoading(false);
 
         }, )
@@ -150,7 +149,7 @@ export const DataTable: React.FC = () => {
       try{
         setTimeout(async () => {
           const data = await getNews(page,fromDate,toDate, category);
-          setNews(data);
+          setNews(data.doc);
           setLoading(false);
 
         }, )
@@ -165,7 +164,7 @@ export const DataTable: React.FC = () => {
       try{
         setTimeout(async () => {
           const data = await getNews(page,fromDate,toDate, category);
-          setNews(data);
+          setNews(data.doc);
           setLoading(false);
 
         }, 0 ) 
@@ -180,10 +179,11 @@ export const DataTable: React.FC = () => {
       try{
         setTimeout(async () => {
           const data = await getNews(page, fromDate,toDate,category);
-          setNews(data);
+          setNews(data.doc);
+          console.log(news)
           setLoading(false);
 
-        }, 0 ) 
+        }, ) 
       }catch (error){
         setLoading(false);
       }
@@ -261,7 +261,7 @@ export const DataTable: React.FC = () => {
       <Box  pr={'10%'} pl={'10%'}>
 
         <TableContainer border='2px' borderRadius='3'>
-        <Table  variant="striped" colorScheme={"teal"} >
+        <Table variant="striped" colorScheme={"teal"} >
             <TableCaption>Documentos geolocalizables</TableCaption>
             <Thead>
               <Tr>
@@ -275,9 +275,9 @@ export const DataTable: React.FC = () => {
             </Thead>
             {loading? 
             (
-            <Center bg='' h='300px'>
+            <Td colSpan={6} h='300px'>
               <CircularProgress isIndeterminate color='#46c5a5' size='12rem'/>
-            </Center>
+            </Td>
             )
             :
             
