@@ -1,8 +1,9 @@
 import httpx
 import json
 import asyncio
+import pandas as pd
 
-# URL de la API
+# # URL de la API
 url = "http://127.0.0.1:8000/geolocalize"
 
 async def enviar_documentos(noticia):
@@ -17,6 +18,11 @@ async def enviar_documentos(noticia):
 with open('noticias.json', 'r') as jf: 
     noticias = json.load(jf)
 
+# Cargar el conjunto de datos desde el archivo CSV
+df = pd.read_csv('datasetfinal.csv')
+
+# Convertir las filas del DataFrame en una lista de diccionarios
+noticias = df.to_dict(orient='records')
 async def send():
     for noticia in noticias:
         await enviar_documentos([noticia])

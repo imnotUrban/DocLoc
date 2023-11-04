@@ -1,10 +1,10 @@
 from sqlalchemy import and_
-from typing import List, Annotated
+from typing import List
 from config.db import conn
 from datetime import datetime
 from models.document import documents
 from schemas.document import Document
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
 api = APIRouter()
@@ -13,9 +13,8 @@ class QueryOut(BaseModel):
    doc: List[Document]
    count: int
 
-@api.get("/all", response_model=List[Document])
-def all():
-   return conn.query(documents).all()
+def make_out(result, start_index, end_index):
+   return {"doc": result[start_index:end_index], "count": result.count()}
 
 @api.get("/query", response_model=QueryOut)
 def filters(all: str = None, from_: str | None = None, to_: str | None = None, cat: str | None = None, page: int | None = 1):
@@ -25,48 +24,42 @@ def filters(all: str = None, from_: str | None = None, to_: str | None = None, c
    page = 1 if page < 1 else page
    start_index = (page - 1) * 10
    end_index = page * 10
-
-   if all == "all":
-      return {"doc": query.all(), "count": query.count()}
-
-   elif from_ and to_ and cat: # Si vienen los tres parametros en la query
-      result = query.filter(and_(documents.c.date >= from_, documents.c.date <= to_, documents.c.category == cat))
-      total_count = result.count()
-      return {"doc": result[start_index:end_index], "count":total_count}
    
-   elif from_ and to_:
-      result = query.filter(and_(documents.c.date >= from_, documents.c.date <= to_))[start_index:end_index]
-      total_count = result.count()
-      return {"doc": result[start_index:end_index], "count":total_count}
+   try:
 
-   elif from_ and cat:
-      result = query.filter(and_(documents.c.date >= from_, documents.c.date <= default_to, documents.c.category == cat))[start_index:end_index]
-      total_count = result.count()
-      return {"doc": result[start_index:end_index], "count":total_count}
+      if all == "all":
+         return {"doc": query.all(), "count": query.count()}
 
-   elif to_ and cat:
-      result = query.filter(and_(documents.c.date >= default_from, documents.c.date <= to_, documents.c.category == cat))[start_index:end_index]
-      total_count = result.count()
-      return {"doc": result[start_index:end_index], "count":total_count}
+      elif from_ and to_ and cat: # Si vienen los tres parametros en la query
+         result = query.filter(and_(documents.c.date >= from_, documents.c.date <= to_, documents.c.category == cat))
+         return make_out(result, start_index, end_index)
+      
+      elif from_ and to_:
+         result = query.filter(and_(documents.c.date >= from_, documents.c.date <= to_))[start_index:end_index]
+         return make_out(result, start_index, end_index)
 
-   elif from_:
-      result = query.filter(and_(documents.c.date >= from_, documents.c.date <= default_to))[start_index:end_index]
-      total_count = result.count()
-      return {"doc": result[start_index:end_index], "count":total_count}
+      elif from_ and cat:
+         result = query.filter(and_(documents.c.date >= from_, documents.c.date <= default_to, documents.c.category == cat))[start_index:end_index]
+         return make_out(result, start_index, end_index)
 
-   elif to_:
-      result = query.filter(and_(documents.c.date >= default_from, documents.c.date <= to_))[start_index:end_index]
-      total_count = result.count()
-      return {"doc": result[start_index:end_index], "count":total_count}
+      elif to_ and cat:
+         result = query.filter(and_(documents.c.date >= default_from, documents.c.date <= to_, documents.c.category == cat))[start_index:end_index]
+         return make_out(result, start_index, end_index)
 
-   elif cat: 
-      result = query.filter(and_(documents.c.date >= default_from, documents.c.date <= default_to, documents.c.category == cat))[start_index:end_index]
-      total_count = result.count()
-      return {"doc": result[start_index:end_index], "count":total_count}
+      elif from_:
+         result = query.filter(and_(documents.c.date >= from_, documents.c.date <= default_to))[start_index:end_index]
+         return make_out(result, start_index, end_index)
 
-   else:
-      result = query[start_index:end_index]
-      total_count = len(result)
-      return {"doc": result[start_index:end_index], "count":total_count}
+      elif to_:
+         result = query.filter(and_(documents.c.date >= default_from, documents.c.date <= to_))[start_index:end_index]
+         return make_out(result, start_index, end_index)
 
+      elif cat: 
+         result = query.filter(and_(documents.c.date >= default_from, documents.c.date <= default_to, documents.c.category == cat))[start_index:end_index]
+         return make_out(result, start_index, end_index)
+         
+      else:
+         return {"doc": [], "count": 0}
 
+   except Exception as e:
+      raise HTTPException(status_code=400, detail= f"Bad Request {str(e)}")
