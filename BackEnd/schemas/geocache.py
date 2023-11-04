@@ -19,7 +19,7 @@ class CacheDocument():
         conn.commit()
         
     def checkInCache(self):
-        print(f"Buscando en cahe: {self.location}")
+        print(f"Buscando en cache: {self.location}")
         row = conn.execute(geocache_table.select().where(geocache_table.c.location == self.location)).fetchone()
         conn.commit()
         if row:

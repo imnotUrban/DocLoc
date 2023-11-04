@@ -115,7 +115,7 @@ export const DataTable: React.FC = () => {
           setNews(data);
           setLoading(false);
 
-        }, 0 ) //3000
+        }, 0 ) 
       }catch (error){
         setLoading(false);
       }
@@ -130,7 +130,7 @@ export const DataTable: React.FC = () => {
           setNews(data);
           setLoading(false);
 
-        }, 0 ) //3000
+        }, 0 ) 
       }catch (error){
         setLoading(false);
       }
@@ -193,26 +193,28 @@ export const DataTable: React.FC = () => {
             </Thead>
             {loading? 
             (
-            <CircularProgress isIndeterminate color='green.300' size='12rem'/>
+            <Center bg='' h='300px'>
+              <CircularProgress isIndeterminate color='#46c5a5' size='12rem'/>
+            </Center>
             )
             :
             
             <Tbody>
-      {news.map((item) => (
-        <Tr key={item.id}>
-          <Td>
-            <Checkbox
-              isChecked={checkItems.some((selectedItem) => selectedItem.id === item.id)}
-              onChange={() => handleCheckboxChange(item)}
-            />
-      </Td>
-      <Td>Categoría por ver</Td>
-      <Td>{item.date}</Td>
-      <Td>{item.title}</Td>
-      <Td>{item.lat}</Td>
-      <Td>{item.lng}</Td>
-    </Tr>
-  ))
+              {news.map((item) => (
+                <Tr key={item.id}>
+                  <Td>
+                    <Checkbox
+                      isChecked={checkItems.some((selectedItem) => selectedItem.id === item.id)}
+                      onChange={() => handleCheckboxChange(item)}
+                        />
+                  </Td>
+                  <Td>Categoría por ver</Td>
+                  <Td>{item.date}</Td>
+                  <Td>{item.title}</Td>
+                  <Td>{item.lat}</Td>
+                  <Td>{item.lng}</Td>
+                </Tr>
+              ))
   
   
   }

@@ -22,17 +22,18 @@ async def create_documents(document: List[Document]):
         result = doc.exists()
         if result is not None:
             return result
-        doc.saveDocin()
-        doc.updateDocState(1) # Se guardo
     
         GPTResult = queryEngine.query(doc.text)
         doc.updateSummary(GPTResult["data"]["summary"])
-        doc.updateDocState(2) # Se obtuvo resumen y ubicación
+        doc.updateDocState(1) # Se obtuvo resumen y ubicación
 
         geoResult = geoloc.getCoordinates(GPTResult["data"])
-        doc.updateDocLocLatLng(geoResult['location'], geoResult['lat'], geoResult['lng'])
-        doc.updateDocState(3) # Se obtuvo lat y lng
-
-        return doc.geolocalized()
+        if geoResult['lat'] != " ":
+            doc.updateDocLocLatLng(geoResult['location'], geoResult['lat'], geoResult['lng'])
+            doc.updateDocState(2) # Se obtuvo lat y lng y se guarda en db
+            doc.saveDocin()
+            return doc.geolocalized()
+        else:
+            return {"msg": f"{geoResult['location']}, no es una ubicación válida"}
     except Exception as e:
         raise HTTPException(status_code=422, detail=f"Ha habido un error al ingresar el documento, intente seguir el formato indicado en la documentación {str(e)}")

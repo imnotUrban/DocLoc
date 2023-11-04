@@ -1,4 +1,5 @@
 ./**/__pycache__
+/.vscode
 __pycache__
 Rabbit
 .env
@@ -6,3 +7,4 @@ doc.json
 noticias.json
 test.py
 test.ipynb
+FrontEnd/docLocFront/node_modules
