@@ -18,48 +18,48 @@ def make_out(result, start_index, end_index):
 
 @api.get("/query", response_model=QueryOut)
 def filters(all: str = None, from_: str | None = None, to_: str | None = None, cat: str | None = None, page: int | None = 1):
-   query = conn.query(documents)
-   default_from =  "1970-01-01"
+   default_from = "1970-01-01"
    default_to = datetime.now().strftime('%Y-%m-%d')
    page = 1 if page < 1 else page
    start_index = (page - 1) * 10
    end_index = page * 10
    
    try:
+      query = conn.query(documents)
 
       if all == "all":
          return {"doc": query.all(), "count": query.count()}
 
-      elif from_ and to_ and cat: # Si vienen los tres parametros en la query
+      elif from_ and to_ and cat and page:
          result = query.filter(and_(documents.c.date >= from_, documents.c.date <= to_, documents.c.category == cat))
          return make_out(result, start_index, end_index)
       
-      elif from_ and to_:
-         result = query.filter(and_(documents.c.date >= from_, documents.c.date <= to_))[start_index:end_index]
+      elif from_ and to_ and page:
+         result = query.filter(and_(documents.c.date >= from_, documents.c.date <= to_))
          return make_out(result, start_index, end_index)
 
-      elif from_ and cat:
-         result = query.filter(and_(documents.c.date >= from_, documents.c.date <= default_to, documents.c.category == cat))[start_index:end_index]
+      elif from_ and cat and page:
+         result = query.filter(and_(documents.c.date >= from_, documents.c.date <= default_to, documents.c.category == cat))
          return make_out(result, start_index, end_index)
 
-      elif to_ and cat:
-         result = query.filter(and_(documents.c.date >= default_from, documents.c.date <= to_, documents.c.category == cat))[start_index:end_index]
+      elif to_ and cat and page:
+         result = query.filter(and_(documents.c.date >= default_from, documents.c.date <= to_, documents.c.category == cat))
          return make_out(result, start_index, end_index)
 
-      elif from_:
-         result = query.filter(and_(documents.c.date >= from_, documents.c.date <= default_to))[start_index:end_index]
+      elif from_ and page:
+         result = query.filter(and_(documents.c.date >= from_, documents.c.date <= default_to))
          return make_out(result, start_index, end_index)
 
-      elif to_:
-         result = query.filter(and_(documents.c.date >= default_from, documents.c.date <= to_))[start_index:end_index]
+      elif to_ and page:
+         result = query.filter(and_(documents.c.date >= default_from, documents.c.date <= to_))
          return make_out(result, start_index, end_index)
 
-      elif cat: 
-         result = query.filter(and_(documents.c.date >= default_from, documents.c.date <= default_to, documents.c.category == cat))[start_index:end_index]
+      elif cat and page:
+         result = query.filter(and_(documents.c.date >= default_from, documents.c.date <= default_to, documents.c.category == cat))
          return make_out(result, start_index, end_index)
          
-      else:
-         return {"doc": [], "count": 0}
+      elif page:
+         return {"doc": query[start_index:end_index], "count": query.count()}
 
    except Exception as e:
       raise HTTPException(status_code=400, detail= f"Bad Request {str(e)}")
