@@ -8,6 +8,7 @@ interface Place {
   date : string;
   title : string;
   url: string;
+  category: string;
   summary: string;
   lat : number;
   lng : number;
