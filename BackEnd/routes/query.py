@@ -12,6 +12,10 @@ api = APIRouter()
 def all():
    return conn.query(documents).all()
 
+@api.get("/count", response_model=List[Document])
+def all():
+   return conn.query(documents).count()
+
 @api.get("/query", response_model=List[Document])
 def filters(from_: str | None = None, to_: str | None = None, cat: str | None = None, page: int = 1):
    query = conn.query(documents)
