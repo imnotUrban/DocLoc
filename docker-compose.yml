@@ -7,26 +7,26 @@ services:
     restart: always
     ports:
       - "3308:3306" # innecesario
-
-  rabbitmq-service:
-    container_name: rabbitmq-container
+  
+  api-service:
+    container_name: api-container
     build:
-      context: ./Rabbit
+      context: ./BackEnd
       dockerfile: Dockerfile
     restart: always
     depends_on:
       - mariadb-service
     ports:
-      - "5008:5672" # innecesario
-  
-  api-service:
-      container_name: api-container
-      build:
-        context: .
-        dockerfile: Dockerfile
-      restart: always
-      depends_on:
-        - mariadb-service
-        - rabbitmq-service
-      ports:
       - "5001:5001" # Cambia el puerto si es necesario
+
+  front-service:
+    container_name: front-container
+    build:
+      context: ./FrontEnd/docLocFront
+      dockerfile: Dockerfile
+    restart: always
+    depends_on:
+      - mariadb-service
+      - api-service
+    ports:
+      - "5008:5008"
