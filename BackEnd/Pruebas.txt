@@ -1,0 +1,7 @@
+Casos de prueba si la BD no tiene ninguna noticia.
+como se comporta el sistema si tiene noticias y cual.
+a la profe le interesa la funcionalidad de cuales son los flujos normales y alternativos.
+que pasa si la bd no está disponible u otros casos alternativos.
+utilizar SW especifico para realizar las pruebas jupyter notebook no sirve según la profe.
+una prueba puede ser replicable, repetible en las mismas condiciones.
+Herramientas para automatizar pruebas: Selenium
