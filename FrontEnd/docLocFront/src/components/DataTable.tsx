@@ -140,7 +140,8 @@ export const DataTable: React.FC = () => {
           setNews(data.doc);
           setMaxPage(Math.ceil(data.count/10));
           setLoading(false);
-
+          setCheckItems(data.doc);
+          setSelectedItems(data.doc);
         }, )
       }catch (error){
         setLoading(false);
