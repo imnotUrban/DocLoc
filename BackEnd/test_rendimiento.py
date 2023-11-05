@@ -1,10 +1,11 @@
+# pytest -s test_rendimiento.py
 from routes.document import document
 from gpt.GPTQueryEngine import GPTQueryEngine
 from google.geocoding import Geocoding
 from fastapi.testclient import TestClient
 from datetime import datetime
 from main import app
-import time  # Importa la biblioteca 'time'
+import time
 
 
 client = TestClient(app)
