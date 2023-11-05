@@ -6,7 +6,7 @@ import React from 'react'
 
 export const Header = () => {
   const {colorMode} = useColorMode();
-  const imagePath = colorMode === "dark" ? '/src/assets/logo_oscuro_2.png': '/src/assets/logo_claro.png' ;
+  const imagePath = colorMode === "dark" ? '../logo_oscuro_2.png': '../logo_claro.png' ;
   return (
       <Box px={10}  >
          {/* bgColor={'#343434'} */}
