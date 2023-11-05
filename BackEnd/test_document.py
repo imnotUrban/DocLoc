@@ -5,11 +5,9 @@ from gpt.GPTQueryEngine import GPTQueryEngine
 from google.geocoding import Geocoding
 from fastapi.testclient import TestClient
 from datetime import datetime
-#from main import app
+from main import app
 
-client = TestClient()
-
-client.include_router(document)
+client = TestClient(app)
 
 def testCreateDocuments():
     # Caso de prueba 1: Enviar un documento válido
