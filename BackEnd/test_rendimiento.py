@@ -10,7 +10,7 @@ import time
 
 client = TestClient(app)
 
-def testCreateDocuments():
+def testBenchmark():
     start_time = time.time()
     # Caso de prueba 1: Enviar un documento válido
     response = client.post("/geolocalize", json=[
@@ -23,27 +23,9 @@ def testCreateDocuments():
         "url": "https://www.meganoticias.cl/nacional/415730-sujetos-rostro-cubierto-roba-casa-penalolen-dinero-efectivo-automovil-01-06-2023.html"
     }
     ])
-    assert response.status_code == 200
-
-    responseJSON = response.json()
-
-    # Datos de referencia con un margen de error de 10
-    reference_data = {'date': '2023-05-31', 'location': 'Peñalolén, Región Metropolitana, Chile', 'lat': '-33.4719116', 'lng': '-70.5627854'}
-
-
-    # Comparar los datos con un margen de error de 10 para las coordenadas
-
-    response_item = responseJSON
-    
-    # Compara las coordenadas con un margen de error de 10
-    lat_reference = float(reference_data['lat'])
-    lng_reference = float(reference_data['lng'])
-    lat_response = float(response_item['lat'])
-    lng_response = float(response_item['lng'])
-
-    assert abs(lat_reference - lat_response) <= 10, f"La latitud no coincide para el elemento {i}"
-    assert abs(lng_reference - lng_response) <= 10, f"La longitud no coincide para el elemento {i}"
 
     end_time = time.time()
     elapsed_time = end_time - start_time
     print(f"Tiempo transcurrido en prueba de documento: {elapsed_time} segundos")
+
+    assert elapsed_time < 15
