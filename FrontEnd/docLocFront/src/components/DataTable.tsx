@@ -1,6 +1,6 @@
 import { ArrowLeftIcon, ArrowRightIcon, MinusIcon } from '@chakra-ui/icons'
 import {  Box ,Tr,Th,Table,TableCaption,TableContainer,Text, Thead, Tbody, Td, Tfoot, Checkbox, Grid, Select, GridItem, Button, CircularProgress, ButtonGroup, Center, ColorModeContext} from '@chakra-ui/react'
-import { getNews } from '../services/api'
+import { getNews } from '../services/apiService'
 import React, {  useEffect, useState } from 'react'
 import { useSelectedItems } from '../context/SelectedItemsContext'
 import '../styles/table.css'
