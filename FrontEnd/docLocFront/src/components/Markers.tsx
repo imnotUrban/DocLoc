@@ -37,7 +37,7 @@ const Markers: React.FC<MarkersProps> = (props) => {
               <Text>...{place.summary}...</Text>
             </CardBody>
             <CardFooter>
-              <Button  ><a href={place.url}> Origen </a></Button>
+              <Button  ><a href={place.url} target="_blank"> Origen </a></Button>
             </CardFooter>
 
           </Card>

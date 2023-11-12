@@ -1,6 +1,6 @@
 import { ArrowLeftIcon, ArrowRightIcon, MinusIcon } from '@chakra-ui/icons'
 import {  Box ,Tr,Th,Table,TableCaption,TableContainer,Text, Thead, Tbody, Td, Tfoot, Checkbox, Grid, Select, GridItem, Button, CircularProgress, ButtonGroup, Center, ColorModeContext} from '@chakra-ui/react'
-import { getNews } from '../services/api'
+import { getNews } from '../services/apiService'
 import React, {  useEffect, useState } from 'react'
 import { useSelectedItems } from '../context/SelectedItemsContext'
 import '../styles/table.css'
@@ -28,6 +28,7 @@ export const DataTable: React.FC = () => {
   const [filterSort, setFilterSort] = useState(false);
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
+  const [maxPage, setMaxPage] = useState(0);
 
   const handleFromDate = (event) => {
     setFromDate(event.target.value);
@@ -66,6 +67,7 @@ export const DataTable: React.FC = () => {
   console.log(fromDate)
   console.log(category)
   setFilterSort(current => !current);
+  setPages(1);
  }
 
  const handleCleanFilters = () =>{
@@ -73,6 +75,7 @@ export const DataTable: React.FC = () => {
   setFromDate('');
   setToDate('');
   setFilterSort(sorted => !sorted);
+  setPages(1);
  }
 
  const handleCheckboxChange = (item: locations) => {
@@ -135,8 +138,10 @@ export const DataTable: React.FC = () => {
         setTimeout(async () => {
           const data = await getNews(page, fromDate,toDate,category);
           setNews(data.doc);
+          setMaxPage(Math.ceil(data.count/10));
           setLoading(false);
-
+          setCheckItems(data.doc);
+          setSelectedItems(data.doc);
         }, )
       }catch (error){
         setLoading(false);
@@ -150,6 +155,8 @@ export const DataTable: React.FC = () => {
         setTimeout(async () => {
           const data = await getNews(page,fromDate,toDate, category);
           setNews(data.doc);
+          setMaxPage(Math.ceil(data.count/10));
+
           setLoading(false);
 
         }, )
@@ -165,6 +172,8 @@ export const DataTable: React.FC = () => {
         setTimeout(async () => {
           const data = await getNews(page,fromDate,toDate, category);
           setNews(data.doc);
+          setMaxPage(Math.ceil(data.count/10));
+          console.log(maxPage)
           setLoading(false);
 
         }, 0 ) 
@@ -180,6 +189,8 @@ export const DataTable: React.FC = () => {
         setTimeout(async () => {
           const data = await getNews(page, fromDate,toDate,category);
           setNews(data.doc);
+          setMaxPage(Math.ceil(data.count/10));
+          console.log(maxPage)
           console.log(news)
           setLoading(false);
 
@@ -313,7 +324,7 @@ export const DataTable: React.FC = () => {
       <Center>
 
         <ButtonGroup  mt={'3'} >
-          <Button leftIcon={<ArrowLeftIcon />} onClick={prevPage}>
+          <Button isDisabled= {page===1} leftIcon={<ArrowLeftIcon />} onClick={prevPage}>
             Anterior
           </Button>
           <Center w='40px' h='40px'  _dark={{color:'white'}}>
@@ -321,7 +332,7 @@ export const DataTable: React.FC = () => {
               {page}
             </Box>
           </Center>
-          <Button rightIcon={<ArrowRightIcon />} onClick={nextPage} >
+          <Button  isDisabled={page === maxPage}  rightIcon={<ArrowRightIcon />} onClick={nextPage} >
             Siguiente
           </Button>
         </ButtonGroup>
