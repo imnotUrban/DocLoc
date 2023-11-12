@@ -24,6 +24,8 @@ def testBenchmark():
     }
     ])
 
+    assert response.status_code == 200
+
     end_time = time.time()
     elapsed_time = end_time - start_time
     print(f"Tiempo transcurrido en prueba de documento: {elapsed_time} segundos")
