@@ -69,4 +69,7 @@ def filters(all: str = None, from_: str | None = None, to_: str | None = None, c
          return {"doc": query[start_index:end_index], "count": query.count()}
 
    except Exception as e:
+      conn.rollback()
       raise HTTPException(status_code=400, detail= f"Bad Request {str(e)}")
+   finally:
+      conn.close()

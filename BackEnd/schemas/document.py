@@ -31,7 +31,6 @@ class Document(BaseModel):
         finally:
             conn.close()
 
-
     def updateDocState(self, docState : int):
         self.state = docState
 
