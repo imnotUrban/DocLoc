@@ -26,18 +26,25 @@ class Document(BaseModel):
             self.id = result.inserted_primary_key[0]
             print("Agregado correctamente")
         except Exception as e:
-            raise Exception(f"No se ha podido crear el objeto documento {str(e)}")
-    
+            conn.rollback()
+            raise Exception(f"No se ha podido crear el objeto documento: {str(e)}")
+        finally:
+            conn.close()
+
+
     def updateDocState(self, docState : int):
         self.state = docState
 
-    def updateDocResult(self, docResult : str):  
+    def updateDocResult(self, docResult: str):
         try:
             conn.execute(documents.update().where(documents.c.id == self.id).values(result=docResult))
             conn.commit()
             print("Resultado del documento actualizado correctamente")
         except Exception as e:
+            conn.rollback()
             raise Exception(f"No se ha podido actualizar el resultado del documento: {str(e)}")
+        finally:
+            conn.close()
 
     def updateSummary(self, summary: str):
         self.summary = summary
@@ -46,7 +53,10 @@ class Document(BaseModel):
             conn.commit()
             print("Resumen actualizado")
         except Exception as e:
+            conn.rollback()
             raise Exception(f"No se ha podido actualizar el resumen: {str(e)}")
+        finally:
+            conn.close()
         
     def updateDocLocLatLng(self, docLoc: str, docLat : str, docLng: str):  
         self.location = docLoc
@@ -57,7 +67,10 @@ class Document(BaseModel):
             conn.commit()
             print("Documento actualizado correctamente")
         except Exception as e:
+            conn.rollback()
             raise Exception(f"No se ha podido actualizar la Latitud o longitud del documento: {str(e)}")
+        finally:
+            conn.close()
         
     def exists(self) -> bool:
         try:
@@ -67,7 +80,10 @@ class Document(BaseModel):
             else: 
                 return None
         except Exception as e:
+            conn.rollback()
             raise Exception(f"No se ha podido verificar la existencia del título: {str(e)}")
+        finally:
+            conn.close()
 
     def geolocalized(self):
         return {"title":self.title, "text":self.text, "date":self.date, "category":self.category, "url":self.url, "summary":self.summary, "location":self.location, "lat":self.lat, "lng":self.lng}
