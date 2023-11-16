@@ -1,0 +1,22 @@
+# Raíz
+.vscode
+*/__pycache__
+.git
+.gitignore
+dataset.py
+datasetfinal.csv
+demo.py
+noticias.json
+README.md
+sophia.csv
+
+# Backend
+./BackEnd/gpt/noticias-2023-05-31.csv
+./BackEnd/gpt/test_GPTQueryEngine.py
+./BackEnd/gpt/testing_json.py
+
+# Frontend
+./FrontEnd/README.md
+./FrontEnd/docLocFront/node_modules
+./FrontEnd/docLocFront/.gitignore
+./FrontEnd/docLocFront/README.md
