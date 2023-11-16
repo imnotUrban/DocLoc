@@ -7,14 +7,14 @@ const chakraTheme = extendTheme({
   styles: {
     global: (props) => ({
       body: {
-        bg: props.colorMode === "dark" ? "gray.900" : "red",
+        bg: props.colorMode === "dark" ? "#1D1D1B" : "red",
       },
     },
   },
   colors: {
     brand: {
       100: "#f7fafc", // Modo claro
-      900: "#171923", // Modo oscuro
+      900: "#1D1D1B", // Modo oscuro
     },
   },
 } as ThemeConfig); // Añade "as ThemeConfig" para establecer el tipo de retorno
