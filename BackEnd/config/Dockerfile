@@ -6,3 +6,4 @@ ENV MYSQL_PASSWORD=1234
 ENV MYSQL_DATABASE=storedb
 
 COPY init.sql /docker-entrypoint-initdb.d/
+COPY db.sql /docker-entrypoint-initdb.d/

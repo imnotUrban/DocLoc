@@ -32,34 +32,44 @@ def filters(all: str = None, from_: str | None = None, to_: str | None = None, c
 
       elif from_ and to_ and cat and page:
          result = query.filter(and_(documents.c.date >= from_, documents.c.date <= to_, documents.c.category == cat))
+         conn.commit()
          return make_out(result, start_index, end_index)
       
       elif from_ and to_ and page:
          result = query.filter(and_(documents.c.date >= from_, documents.c.date <= to_))
+         conn.commit()
          return make_out(result, start_index, end_index)
 
       elif from_ and cat and page:
          result = query.filter(and_(documents.c.date >= from_, documents.c.date <= default_to, documents.c.category == cat))
+         conn.commit()
          return make_out(result, start_index, end_index)
 
       elif to_ and cat and page:
          result = query.filter(and_(documents.c.date >= default_from, documents.c.date <= to_, documents.c.category == cat))
+         conn.commit()
          return make_out(result, start_index, end_index)
 
       elif from_ and page:
          result = query.filter(and_(documents.c.date >= from_, documents.c.date <= default_to))
+         conn.commit()
          return make_out(result, start_index, end_index)
 
       elif to_ and page:
          result = query.filter(and_(documents.c.date >= default_from, documents.c.date <= to_))
+         conn.commit()
          return make_out(result, start_index, end_index)
 
       elif cat and page:
          result = query.filter(and_(documents.c.date >= default_from, documents.c.date <= default_to, documents.c.category == cat))
+         conn.commit()
          return make_out(result, start_index, end_index)
          
       elif page:
          return {"doc": query[start_index:end_index], "count": query.count()}
 
    except Exception as e:
+      conn.rollback()
       raise HTTPException(status_code=400, detail= f"Bad Request {str(e)}")
+   finally:
+      conn.close()
