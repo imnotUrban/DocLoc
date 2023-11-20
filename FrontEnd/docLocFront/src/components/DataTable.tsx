@@ -205,7 +205,7 @@ export const DataTable: React.FC = () => {
         </Text>
         
         <Grid templateColumns={['repeat(1, 1fr)', 'repeat(2, 1fr)', 'repeat(3, 1fr)', 'repeat(6, 1fr)']} gap={4} py='2%'>
-  <GridItem>
+  <GridItem >
     <Text fontSize='l' fontFamily='Mukta Vaani' fontWeight='400'>Categoría</Text>
     <Select id='CategorySelect' placeholder='Categoría' value={category} onChange={handleCategoriaChange}>
       <option value='entretenimiento'>Entretenimiento</option>
@@ -256,7 +256,7 @@ export const DataTable: React.FC = () => {
   </GridItem>
 </Grid>
 
-      <Box  pr={'0%'} >
+      <Box  pr={'0%'}  maxHeight="65vh" overflowY="auto" >
 
         <TableContainer border='2px' borderRadius='3'   >
         <Table size='sm' variant="striped" colorScheme={"teal"}>

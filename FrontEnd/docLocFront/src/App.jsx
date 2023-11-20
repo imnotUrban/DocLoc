@@ -16,7 +16,7 @@ export const App = () => {
           <MapView />
         </Box>
         <Box flex="1" p="2">
-          <DataTable />
+          <DataTable  />
         </Box>
       </Flex>
     </Box>
