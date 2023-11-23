@@ -11,9 +11,9 @@ from dotenv import load_dotenv
 import googlemaps
 from dataclasses import dataclass
 
-load_dotenv(dotenv_path="../.env")
-key = os.getenv("API_GEOCODING")
-gmaps = googlemaps.Client(key=key)
+# load_dotenv(dotenv_path="../.env")
+# key = os.getenv("API_GEOCODING")
+# gmaps = googlemaps.Client(key=key)
 geolocator = Nominatim(user_agent="DocLoc")
 
 @dataclass

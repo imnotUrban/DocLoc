@@ -6,9 +6,14 @@ from schemas.document import Document
 
 app = FastAPI()
 
+origins = [
+    "http://completoschile.online",
+    "https://completoschile.online",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # En producción, define aquí los dominios permitidos
+    allow_origins=origins,  # En producción, define aquí los dominios permitidos
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

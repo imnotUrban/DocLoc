@@ -7,7 +7,7 @@ from schemas.document import Document
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
-api = APIRouter()
+api = APIRouter(prefix="/api")
 
 class QueryOut(BaseModel):
    doc: List[Document]
