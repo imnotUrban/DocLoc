@@ -25,7 +25,7 @@ export const MapView = () => {
   return (
     
     <Box className='mapContainer' >
-      <Text fontSize='3xl'  fontFamily='Mukta Vaani' fontWeight='400' align='right' pr='10%'> GEOLOCALIZACIÓN DE DOCUMENTOS TERRITORIALES</Text>
+      <Text fontSize='3xl'  fontFamily='Mukta Vaani' fontWeight='400' > GEOLOCALIZACIÓN DE DOCUMENTOS TERRITORIALES</Text>
       <MapContainer center={mapCenter} zoom={6} >
         <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
