@@ -4,7 +4,7 @@
 
 Dependiendo del navegador con el que quieras realizar las pruebas, necesitarás el controlador específico:
 
-* Chrome: ChromeDriver - Descárgalo desde el sitio web oficial de [ChromeDriver](https://sites.google.com/chromium.org/driver/).
+* Chrome: ChromeDriver - Descárgalo desde el sitio web oficial de [ChromeDriver](https://sites.google.com/chromium.org/driver/). Si usas Chrome versión 115 o una versión más nueva los controladores se encuentran [aquí](https://googlechromelabs.github.io/chrome-for-testing/)
 * Firefox: GeckoDriver - Descárgalo desde el sitio web oficial de [GeckoDriver](https://github.com/mozilla/geckodriver/releases).
 * Safari: SafariDriver - Ya viene incluido con Safari en macOS.
 
