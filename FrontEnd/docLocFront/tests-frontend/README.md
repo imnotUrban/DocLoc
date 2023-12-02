@@ -4,56 +4,23 @@
 
 Dependiendo del navegador con el que quieras realizar las pruebas, necesitarás el controlador específico:
 
-* Chrome: ChromeDriver - Descárgalo desde el sitio web oficial de ChromeDriver https://sites.google.com/chromium.org/driver/.
-* Firefox: GeckoDriver - Descárgalo desde el sitio web oficial de GeckoDriver https://github.com/mozilla/geckodriver/releases.
+* Chrome: ChromeDriver - Descárgalo desde el sitio web oficial de [ChromeDriver](https://sites.google.com/chromium.org/driver/).
+* Firefox: GeckoDriver - Descárgalo desde el sitio web oficial de [GeckoDriver](https://github.com/mozilla/geckodriver/releases).
 * Safari: SafariDriver - Ya viene incluido con Safari en macOS.
 
 2. Configuración del controlador
 
-Una vez descargado, descomprime el archivo y colócalo en un directorio accesible (por ejemplo, /usr/local/bin en sistemas Unix) o añade su ubicación al PATH del sistema.
-
-En Linux o macOS, puedes hacerlo así (suponiendo que el controlador se encuentra en tu carpeta de descargas)
-
-```
-# Cambia el nombre del archivo del controlador según corresponda
-sudo mv ~/Downloads/chromedriver /usr/local/bin/chromedriver
-sudo chmod +x /usr/local/bin/chromedriver
-```
-
-También se puede colocar descomprimido en la carpeta tests-frontend.
-
-3. Verificación de la instalación
-
-Para verificar que el controlador está correctamente instalado y en tu PATH, puedes ejecutar el siguiente comando en la terminal:
-
-```
-chromedriver --version  # Reemplaza "chromedriver" con el nombre del controlador que instalaste
-```
-
-Si todo está bien, debería mostrar la versión del controlador.
-
-4. Uso del controlador con Selenium
-
-En tu código de prueba de Selenium, inicializa el controlador usando el nombre del controlador correspondiente:
-
-```
-from selenium import webdriver
-
-# Ruta al controlador (ejemplo para ChromeDriver)
-driver = webdriver.Chrome('/usr/local/bin/chromedriver')  # Reemplaza con la ubicación correcta del controlador
-```
-
-Asegúrate de usar la ruta correcta al controlador que has instalado en tu sistema. Con esta configuración, Selenium utilizará el controlador correspondiente para controlar el navegador que elijas para realizar las pruebas automatizadas.
+Una vez descargado, descomprime el archivo y colócalo dentro de la carpeta tests-frontend
 
 ## Pasos para configurar el ambiente virtual
 
-1. Crear un nuevo ambiente virtual
+1. Crea un ambiente virtual
 
 ```
 python -m venv test_frontend
 ```
 
-2. Activar el ambiente virtual
+2. Activa el ambiente virtual
 
 En Windows
 
@@ -67,17 +34,43 @@ En macOS y Linux
 test_frontend/bin/activate
 ```
 
-3. Instalar dependencias
+3. Instala las dependencias
 
 ```
 pip install -r requirements.txt
 ```
 
-4. Desactivar el ambiente virtual
+4. Desactivar el ambiente virtual (para cuando termines las pruebas)
 
 ```
 deactivate
 ```
+## Ejecutar pruebas
+
+Puedes ejecutar todas las pruebas usando el comando
+
+```
+pytest
+```
+
+También puedes ejecutar un conjunto de pruebas usando marcadores (usar marcadores evita que la prueba que verifica la url funcione).
+
+Los siguientes marcadores están disponibles:
+
+```
+pytest -m select
+```
+Prueba que el filtro de las noticias de acuerdo a las categorias funciona.
+
+```
+pytest -m data
+```
+Prueba que el filtro de las noticias de acuerdo a un intervalo de fechas funciona.
+
+```
+pytest -m navigation
+```
+Prueba que los botones de navegación de atrás y adelante funcionan.
 
 ## Documentación para Selenium
 
