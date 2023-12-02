@@ -47,6 +47,8 @@ deactivate
 ```
 ## Ejecutar pruebas
 
+Debes estar dentro de la carpeta tests-fronted para ejecutar las pruebas.
+
 Puedes ejecutar todas las pruebas usando el comando
 
 ```
