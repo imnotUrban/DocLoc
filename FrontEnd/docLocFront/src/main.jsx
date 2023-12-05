@@ -10,15 +10,15 @@ const theme = extendTheme({
   styles: {
     global: (props) => ({
       body: {
-        bg: props.colorMode === "dark" ? "#343434" : "#f2f2f2",
-        color: props.colorMode === "dark" ? "#f2f2f2": "#343434",
+        bg: props.colorMode === "dark" ? "#1D1D1B" : "#f2f2f2",
+        color: props.colorMode === "dark" ? "#f2f2f2": "#1D1D1B",
       },
     }),
   },
   colors: {
     brand: {
       100: "#f7fafc", // Modo claro
-      900: "#171923", // Modo oscuro
+      900: "#1D1D1B", // Modo oscuro
     },teal: {
       50: "#E0F7FA",
       100: "#B2EBF2",
@@ -34,6 +34,8 @@ const theme = extendTheme({
 
   },
 });
+
+
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
