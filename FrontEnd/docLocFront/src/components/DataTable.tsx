@@ -197,10 +197,22 @@ export const DataTable: React.FC = () => {
     fetchNews();
   }, [loading]);
 
-
+const Navigation = <ButtonGroup  mt={'3'} >
+<Button id='ButtonPrevious' isDisabled= {page===1} leftIcon={<ArrowLeftIcon />} onClick={prevPage}>
+  Anterior
+</Button>
+<Center w='40px' h='40px'  _dark={{color:'white'}}>
+  <Box as='span' fontWeight='bold' fontSize='lg'>
+    {page}
+  </Box>
+</Center>
+<Button id='ButtonNext' isDisabled={page === maxPage}  rightIcon={<ArrowRightIcon />} onClick={nextPage} >
+  Siguiente
+</Button>
+</ButtonGroup>
   return (
     <Box>
-        <Text fontSize='2xl' className='TableTitle' fontFamily='Mukta Vaani' fontWeight='400'> 
+        <Text id='TableTitle' fontSize='2xl' className='TableTitle' fontFamily='Mukta Vaani' fontWeight='400'> 
           <MinusIcon color={'#44cfe2'}/>  DOCUMENTOS DISPONIBLES PARA VISUALIZAR 
         </Text>
         
@@ -222,7 +234,7 @@ export const DataTable: React.FC = () => {
     </Select>
   </GridItem>
   <GridItem>
-    <Text fontSize='l' fontFamily='Mukta Vaani' fontWeight='400' >Desde</Text>
+    <Text id='FromDate' fontSize='l' fontFamily='Mukta Vaani' fontWeight='400' >Desde</Text>
     <input
       type="date"
       name="trip-start"
@@ -234,7 +246,7 @@ export const DataTable: React.FC = () => {
   </GridItem>
 
   <GridItem>
-    <Text fontSize='l' fontFamily='Mukta Vaani' fontWeight='400' >Hasta</Text>
+    <Text id='ToDate' fontSize='l' fontFamily='Mukta Vaani' fontWeight='400' >Hasta</Text>
     <input
       type="date"
       name="trip-start"
@@ -246,7 +258,7 @@ export const DataTable: React.FC = () => {
   </GridItem>
 
   <GridItem colSpan={[2, null, null, 1]}>
-    <Button onClick={handleFilterButton} > Filtrar </Button>
+    <Button id='ButtonFilter' onClick={handleFilterButton} > Filtrar </Button>
   </GridItem>
   {/* <GridItem colSpan={[2, null, null, 1]}>
     <Button onClick={handleCleanButton}> Limpiar Mapa </Button>
@@ -281,7 +293,7 @@ export const DataTable: React.FC = () => {
             :
             
             <Tbody>
-              {news.map((item) => (
+              {news.map((item, index) => (
                 <Tr key={item.id}>
                   <Td style={{ whiteSpace: "normal" }} width='10%'>
                     <Checkbox
@@ -289,7 +301,7 @@ export const DataTable: React.FC = () => {
                       onChange={() => handleCheckboxChange(item)}
                         />
                   </Td>
-                  <Td style={{ whiteSpace: "normal" }} width='10%'>{item.category.toUpperCase()}</Td>
+                  <Td id={`CategoryId${index}`} style={{ whiteSpace: "normal" }} width='10%'>{item.category.toUpperCase()}</Td>
                   <Td style={{ whiteSpace: "normal" }} width='10%'>{item.date}</Td>
                   <Td style={{ whiteSpace: "normal" }} width='50%'>{item.title}</Td>
                   <Td style={{ whiteSpace: "normal" }} width='10%'>{item.location}</Td>
@@ -313,7 +325,7 @@ export const DataTable: React.FC = () => {
       <Center>
 
         <ButtonGroup  mt={'3'} >
-          <Button isDisabled= {page===1} leftIcon={<ArrowLeftIcon />} onClick={prevPage}>
+          <Button id='ButtonPrevious' isDisabled= {page===1} leftIcon={<ArrowLeftIcon />} onClick={prevPage}>
             Anterior
           </Button>
           <Center w='40px' h='40px'  _dark={{color:'white'}}>
@@ -321,7 +333,7 @@ export const DataTable: React.FC = () => {
               {page}
             </Box>
           </Center>
-          <Button  isDisabled={page === maxPage}  rightIcon={<ArrowRightIcon />} onClick={nextPage} >
+          <Button id='ButtonNext' isDisabled={page === maxPage}  rightIcon={<ArrowRightIcon />} onClick={nextPage} >
             Siguiente
           </Button>
         </ButtonGroup>
