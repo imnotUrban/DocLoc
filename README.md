@@ -24,7 +24,7 @@ uvicorn main:app --reload
 Si esto no funciona, puedes intentar lo siguiente:
 
 ```bash
-python -m uvicorn app:app --reload
+python -m uvicorn main:app --reload
 ```
 
 ## Estructura de Carpetas

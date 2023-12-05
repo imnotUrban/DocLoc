@@ -2,7 +2,7 @@ services:
   mariadb-service:
     container_name: mariadb-container
     build:
-      context: ./config
+      context: ./BackEnd/config
       dockerfile: Dockerfile  
     restart: always
     ports:
@@ -11,10 +11,22 @@ services:
   api-service:
     container_name: api-container
     build:
-      context: .
+      context: ./BackEnd
       dockerfile: Dockerfile
     restart: always
     depends_on:
       - mariadb-service
     ports:
       - "5001:5001"
+
+  front-service:
+    container_name: front-container
+    build:
+      context: ./FrontEnd/docLocFront
+      dockerfile: Dockerfile
+    restart: always
+    depends_on:
+      - mariadb-service
+    ports:
+      - "5008:5008"
+      - api-service
