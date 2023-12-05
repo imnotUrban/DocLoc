@@ -16,4 +16,4 @@ documents = Table("documents", meta, Column(
     Column("lng", String(255))
     )
 
-meta.create_all(engine)
+#meta.create_all(engine)

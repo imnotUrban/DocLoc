@@ -1,7 +1,7 @@
 export async function getNews(page: number = 1, fromDate: string = '', toDate: string = '', category: string = '') {
   try {
     //let url = `http://127.0.0.1:8000/query?page=${page}`;
-    let url = `http://0.0.0.0:5001/query?page=${page}`; // Docker URL
+    let url = `http://localhost:5001/query?page=${page}`; // Docker URL
 
     if (category !== '') {
       url += `&cat=${category}`;
