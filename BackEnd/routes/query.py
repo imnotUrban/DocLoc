@@ -1,10 +1,7 @@
-from sqlalchemy import and_
 from typing import List
-from config.db import conn
-from datetime import datetime
-from models.document import documents
+from fastapi import APIRouter
 from schemas.document import Document
-from fastapi import APIRouter, HTTPException
+from controllers.query import query_documents
 from pydantic import BaseModel
 
 api = APIRouter()
@@ -13,63 +10,6 @@ class QueryOut(BaseModel):
    doc: List[Document]
    count: int
 
-def make_out(result, start_index, end_index):
-   return {"doc": result[start_index:end_index], "count": result.count()}
-
 @api.get("/query", response_model=QueryOut)
 def filters(all: str = None, from_: str | None = None, to_: str | None = None, cat: str | None = None, page: int | None = 1):
-   default_from = "1970-01-01"
-   default_to = datetime.now().strftime('%Y-%m-%d')
-   page = 1 if page < 1 else page
-   start_index = (page - 1) * 10
-   end_index = page * 10
-   
-   try:
-      query = conn.query(documents)
-
-      if all == "all":
-         return {"doc": query.all(), "count": query.count()}
-
-      elif from_ and to_ and cat and page:
-         result = query.filter(and_(documents.c.date >= from_, documents.c.date <= to_, documents.c.category == cat))
-         conn.commit()
-         return make_out(result, start_index, end_index)
-      
-      elif from_ and to_ and page:
-         result = query.filter(and_(documents.c.date >= from_, documents.c.date <= to_))
-         conn.commit()
-         return make_out(result, start_index, end_index)
-
-      elif from_ and cat and page:
-         result = query.filter(and_(documents.c.date >= from_, documents.c.date <= default_to, documents.c.category == cat))
-         conn.commit()
-         return make_out(result, start_index, end_index)
-
-      elif to_ and cat and page:
-         result = query.filter(and_(documents.c.date >= default_from, documents.c.date <= to_, documents.c.category == cat))
-         conn.commit()
-         return make_out(result, start_index, end_index)
-
-      elif from_ and page:
-         result = query.filter(and_(documents.c.date >= from_, documents.c.date <= default_to))
-         conn.commit()
-         return make_out(result, start_index, end_index)
-
-      elif to_ and page:
-         result = query.filter(and_(documents.c.date >= default_from, documents.c.date <= to_))
-         conn.commit()
-         return make_out(result, start_index, end_index)
-
-      elif cat and page:
-         result = query.filter(and_(documents.c.date >= default_from, documents.c.date <= default_to, documents.c.category == cat))
-         conn.commit()
-         return make_out(result, start_index, end_index)
-         
-      elif page:
-         return {"doc": query[start_index:end_index], "count": query.count()}
-
-   except Exception as e:
-      conn.rollback()
-      raise HTTPException(status_code=400, detail= f"Bad Request {str(e)}")
-   finally:
-      conn.close()
+    return query_documents(all, from_, to_, cat, page)
