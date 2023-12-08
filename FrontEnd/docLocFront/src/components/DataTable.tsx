@@ -1,5 +1,12 @@
 import { ArrowLeftIcon, ArrowRightIcon, MinusIcon } from '@chakra-ui/icons'
-import {  Box ,Tr,Th,Table,TableCaption,TableContainer,Text, Thead, Tbody, Td, Tfoot, Checkbox, Grid, Select, GridItem, Button, CircularProgress, ButtonGroup, Center, ColorModeContext, Wrap} from '@chakra-ui/react'
+import {  Box ,Tr,Th,Table,TableCaption,TableContainer,Text, Thead, Tbody, Td, Tfoot, Checkbox, Grid, Select, GridItem, Button, CircularProgress, ButtonGroup, Center, ColorModeContext, Wrap,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,} from '@chakra-ui/react'
 import { getNews } from '../services/apiService'
 import React, {  useEffect, useState } from 'react'
 import { useSelectedItems } from '../context/SelectedItemsContext'
@@ -29,6 +36,8 @@ export const DataTable: React.FC = () => {
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
   const [maxPage, setMaxPage] = useState(0);
+  const [showPopup, setShowPopup] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleFromDate = (event) => {
     setFromDate(event.target.value);
@@ -105,20 +114,32 @@ export const DataTable: React.FC = () => {
     console.log(category);
   }
 
+  useEffect(()=> {
+    console.log(showPopup);
+  }, showPopup)
+
   const handleDocuments = async (page: number) => {
     async function fetchNews(){
       try{
         setTimeout(async () => {
-          const data = await getNews(page, fromDate, toDate, category);
-          setNews(data.doc);
-          setMaxPage(Math.ceil(data.count/10));
-          setLoading(false);
+          const {status, data} = await getNews(page, fromDate, toDate, category);
+          if(status === 0) {
+            setNews(data.doc);
+            setMaxPage(Math.ceil(data.count/10));
+            setLoading(false);
+            setShowPopup(false);
+          } else {
+            if(status === 1) {
+              setErrorMessage('La solicitud a la API no fue exitosa');
+            } else {
+              setErrorMessage('Error al obtener los documentos');
+            }
+            //Muestra un popup de error en caso de que no pueda cargar los documentos
+            setShowPopup(true);
+          }
         }, 0)
       }catch (error){
         setLoading(false);
-        //Mostrar un popup de error en caso de que no pueda cargar los documentos
-        //TODO
-        console.log('no cargan los docs');
       }
     }
     fetchNews();
@@ -136,6 +157,21 @@ export const DataTable: React.FC = () => {
     handleDocuments(page);
   }, [filterSort, loading, page]);
 
+
+  const Popup = (
+        <Modal isOpen={showPopup} onClose={() => setShowPopup(false)}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Error!</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            {errorMessage}
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+  
+  )
+
 const Navigation = <ButtonGroup  mt={'3'} >
 <Button id='ButtonPrevious' isDisabled= {page===1} leftIcon={<ArrowLeftIcon />} onClick={prevPage}>
   Anterior
@@ -149,13 +185,14 @@ const Navigation = <ButtonGroup  mt={'3'} >
   Siguiente
 </Button>
 </ButtonGroup>
+
   return (
     <Box>
         <Text id='TableTitle' fontSize='2xl' className='TableTitle' fontFamily='Mukta Vaani' fontWeight='400'> 
           <MinusIcon color={'#44cfe2'}/>  DOCUMENTOS DISPONIBLES PARA VISUALIZAR 
         </Text>
-        
-        <Grid templateColumns={['repeat(1, 1fr)', 'repeat(2, 1fr)', 'repeat(3, 1fr)', 'repeat(6, 1fr)']} gap={4} py='2%'>
+        {showPopup && Popup}      
+  <Grid templateColumns={['repeat(1, 1fr)', 'repeat(2, 1fr)', 'repeat(3, 1fr)', 'repeat(6, 1fr)']} gap={4} py='2%'>
   <GridItem >
     <Text fontSize='l' fontFamily='Mukta Vaani' fontWeight='400'>Categoría</Text>
     <Select id='CategorySelect' placeholder='Categoría' value={category} onChange={handleCategoriaChange}>

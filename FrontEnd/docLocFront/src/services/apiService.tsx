@@ -1,3 +1,9 @@
+enum ApiRequestStatus {
+  Success = 0, // La solicitud a la API fue exitosa
+  RequestUnsuccessful = 1, // La solicitud a la API no fue exitosa
+  DocumentRetrievalError = 2 // Error al obtener los documentos
+}
+
 export async function getNews(page: number = 1, fromDate: string = '', toDate: string = '', category: string = '') {
   try {
     //let url = `http://127.0.0.1:8000/query?page=${page}`;
@@ -17,13 +23,13 @@ export async function getNews(page: number = 1, fromDate: string = '', toDate: s
     const response = await fetch(url);
 
     if (!response.ok) {
-      throw new Error('La solicitud a la API no fue exitosa.');
+      return {status: ApiRequestStatus.RequestUnsuccessful}
     }
 
     const data = await response.json();
-    return data;
+    return {status: ApiRequestStatus.Success, data: data};
   } catch (error) {
     console.error('Error al obtener los documentos:', error);
-    throw error;
+    return {status: ApiRequestStatus.DocumentRetrievalError};
   }
 }
