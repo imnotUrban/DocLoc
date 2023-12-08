@@ -61,10 +61,6 @@ export const DataTable: React.FC = () => {
  };
 
  const handleFilterButton = () => {
-  console.log('filtrando con las querys')
-  console.log(toDate)
-  console.log(fromDate)
-  console.log(category)
   setFilterSort(current => !current);
   setPages(1);
  }
@@ -91,9 +87,6 @@ export const DataTable: React.FC = () => {
   }
 };
 
-
-
-
   useEffect(() => {
     
     console.log(selectedItems)
@@ -113,16 +106,22 @@ export const DataTable: React.FC = () => {
   }
 
   const handleDocuments = async (page: number) => {
-
-    try{
-      const newsData = await getNews(page);
-      setNews(newsData);
-      
-    }catch(error){
-      //Mostrar un popup de error en caso de que no pueda cargar los documentos
-      //TODO
-      console.log('no cargan los docs');
+    async function fetchNews(){
+      try{
+        setTimeout(async () => {
+          const data = await getNews(page, fromDate, toDate, category);
+          setNews(data.doc);
+          setMaxPage(Math.ceil(data.count/10));
+          setLoading(false);
+        }, 0)
+      }catch (error){
+        setLoading(false);
+        //Mostrar un popup de error en caso de que no pueda cargar los documentos
+        //TODO
+        console.log('no cargan los docs');
+      }
     }
+    fetchNews();
   };
 
 
@@ -130,72 +129,12 @@ export const DataTable: React.FC = () => {
    * Carga inicial de los documentos
    */
   useEffect(() => {   
-    async function fetchNews(){
-      try{
-        setTimeout(async () => {
-          const data = await getNews(page, fromDate,toDate,category);
-          setNews(data.doc);
-          setMaxPage(Math.ceil(data.count/10));
-          setLoading(false);
-        }, )
-      }catch (error){
-        setLoading(false);
-      }
-    }
-    fetchNews();
+    handleDocuments(page);
   }, []);
+
   useEffect(() => {   
-    async function fetchNews(){
-      try{
-        setTimeout(async () => {
-          const data = await getNews(page,fromDate,toDate, category);
-          setNews(data.doc);
-          setMaxPage(Math.ceil(data.count/10));
-
-          setLoading(false);
-
-        }, )
-      }catch (error){
-        setLoading(false);
-      }
-    }
-    fetchNews();
-  }, [filterSort]);
-  useEffect(() => {   
-    async function fetchNews(){
-      try{
-        setTimeout(async () => {
-          const data = await getNews(page,fromDate,toDate, category);
-          setNews(data.doc);
-          setMaxPage(Math.ceil(data.count/10));
-          console.log(maxPage)
-          setLoading(false);
-
-        }, 0 ) 
-      }catch (error){
-        setLoading(false);
-      }
-    }
-    fetchNews();
-  }, [page]);
-  useEffect(() => {   
-    async function fetchNews(){
-      try{
-        setTimeout(async () => {
-          const data = await getNews(page, fromDate,toDate,category);
-          setNews(data.doc);
-          setMaxPage(Math.ceil(data.count/10));
-          console.log(maxPage)
-          console.log(news)
-          setLoading(false);
-
-        }, ) 
-      }catch (error){
-        setLoading(false);
-      }
-    }
-    fetchNews();
-  }, [loading]);
+    handleDocuments(page);
+  }, [filterSort, loading, page]);
 
 const Navigation = <ButtonGroup  mt={'3'} >
 <Button id='ButtonPrevious' isDisabled= {page===1} leftIcon={<ArrowLeftIcon />} onClick={prevPage}>
