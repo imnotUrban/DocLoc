@@ -1,16 +1,12 @@
 import { ArrowLeftIcon, ArrowRightIcon, MinusIcon } from '@chakra-ui/icons'
 import {  Box ,Tr,Th,Table,TableCaption,TableContainer,Text, Thead, Tbody, Td, Tfoot, Checkbox, Grid, Select, GridItem, Button, CircularProgress, ButtonGroup, Center, ColorModeContext, Wrap,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,} from '@chakra-ui/react'
+  Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalCloseButton,} from '@chakra-ui/react'
 import { getNews } from '../services/apiService'
 import React, {  useEffect, useState } from 'react'
 import { useSelectedItems } from '../context/SelectedItemsContext'
 import '../styles/table.css'
+import { useSelectedItems } from '../context/SelectedItemsContext';
+import { LatLngTuple, LatLngBounds } from 'leaflet';
 
 export interface locations{
   id: number;
@@ -24,11 +20,9 @@ export interface locations{
   lng : number;
 }
 
-
 export const DataTable: React.FC = () => {  
-  
   const [page, setPages] = useState(1); // Se usa para paginar la página
-  const {selectedItems, setSelectedItems} = useSelectedItems();
+  const {selectedItems, setSelectedItems} = useSelectedItems(); // hook que alimenta el useContext con las noticias seleccionadas que deben mostrarse en el mapa
   const [news, setNews] = useState<locations[]>([]);
   const [loading, setLoading] = useState(true); // Se usa para esperar a que se haga la consulta para que cargue la tabla
   const [category, setCategory] = useState('');
@@ -36,8 +30,14 @@ export const DataTable: React.FC = () => {
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
   const [maxPage, setMaxPage] = useState(0);
-  const [showPopup, setShowPopup] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [showPopup, setShowPopup] = useState(false); // Se encarga de decidir si se muestra el popup o no
+  const [errorMessage, setErrorMessage] = useState(''); // Se encarga de selecionar el mensaje a mostrar en el popup de acuerdo al error
+
+  const mapCenter: [number, number] = [-39.82209496570248, -73.22759947406944];
+  const margin = 0.05;
+  const corner1: LatLngTuple = [mapCenter[0] + margin, mapCenter[1] + margin];
+  const corner2: LatLngTuple = [mapCenter[0] - margin, mapCenter[1] - margin];
+  const bounds = new LatLngBounds(corner1, corner2);
 
   const handleFromDate = (event) => {
     setFromDate(event.target.value);
@@ -47,26 +47,16 @@ export const DataTable: React.FC = () => {
     setToDate(event.target.value);
   };
 
-
   const nextPage = () => {
-    setPages(page+1);
+    setPages(page + 1);
   }
 
   const prevPage = () => {
-    setPages(page-1);
+    setPages(page - 1);
   }
-
- useEffect(() => {
- 
-   return () => {
-     console.log('Se actualiza el arreglo de puntos en el mapa')
-   }
- }, [selectedItems])
- 
 
  const handleCleanButton = () => {
   setSelectedItems([]);
-
  };
 
  const handleFilterButton = () => {
@@ -95,16 +85,6 @@ export const DataTable: React.FC = () => {
     setSelectedItems([...selectedItems, item]);
   }
 };
-
-  useEffect(() => {
-    
-    console.log(selectedItems)
-    return () => {
-      console.log('selectedItems' )
-    }
-  }, [selectedItems])
-  
-
 
   const handleCategoriaChange = (event: React.ChangeEvent<HTMLSelectElement>) =>{
     const categoryId = event.target.id;
@@ -153,38 +133,23 @@ export const DataTable: React.FC = () => {
     handleDocuments(page);
   }, []);
 
-  useEffect(() => {   
+  useEffect(() => {
     handleDocuments(page);
+    //setSelectedItems(bounds);
   }, [filterSort, loading, page]);
 
-
   const Popup = (
-        <Modal isOpen={showPopup} onClose={() => setShowPopup(false)}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Error!</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            {errorMessage}
-          </ModalBody>
-        </ModalContent>
-      </Modal>
-  
-  )
-
-const Navigation = <ButtonGroup  mt={'3'} >
-<Button id='ButtonPrevious' isDisabled= {page===1} leftIcon={<ArrowLeftIcon />} onClick={prevPage}>
-  Anterior
-</Button>
-<Center w='40px' h='40px'  _dark={{color:'white'}}>
-  <Box as='span' fontWeight='bold' fontSize='lg'>
-    {page}
-  </Box>
-</Center>
-<Button id='ButtonNext' isDisabled={page === maxPage}  rightIcon={<ArrowRightIcon />} onClick={nextPage} >
-  Siguiente
-</Button>
-</ButtonGroup>
+    <Modal isOpen={showPopup} onClose={() => setShowPopup(false)}>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>Error!</ModalHeader>
+        <ModalCloseButton />
+        <ModalBody>
+          {errorMessage}
+        </ModalBody>
+      </ModalContent>
+    </Modal>
+  );
 
   return (
     <Box>
