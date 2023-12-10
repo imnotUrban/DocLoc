@@ -12,7 +12,7 @@ DocLoc es una API hecha en Python que se ejecuta en la versión 3.10 o superior,
 1. Crea un ambiente virtual
 
 ```
-python -m venv test_frontend
+python -m venv api
 ```
 
 2. Activa el ambiente virtual
@@ -20,13 +20,13 @@ python -m venv test_frontend
 En Windows
 
 ```
-test_frontend\Scripts\activate
+api\Scripts\activate
 ```
 
 En macOS y Linux
 
 ```
-test_frontend/bin/activate
+api/bin/activate
 ```
 
 3. Instala las dependencias
