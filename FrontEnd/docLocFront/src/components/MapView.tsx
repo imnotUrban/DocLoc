@@ -10,25 +10,16 @@ import { LocationMarkerCenter } from '../helpers/centerMap';
 import { useMap } from 'react-leaflet/hooks'
 import { LatLngTuple, LatLngBounds } from 'leaflet';
 
-type Position = {
-  lat: number;
-  lng: number;
-};
-
 export const MapView = () => {
 
   const mapCenter: [number, number] = [-39.82209496570248, -73.22759947406944];
   const margin = 0.05;
   const corner1: LatLngTuple = [mapCenter[0] + margin, mapCenter[1] + margin];
   const corner2: LatLngTuple = [mapCenter[0] - margin, mapCenter[1] - margin];
-  const bound = new LatLngBounds(corner1, corner2);
+  const initialBounds = new LatLngBounds(corner1, corner2);
 
   const {selectedItems} = useSelectedItems();
-  const [mapBounds, setMapBounds] = useState(bound);
-
-  useEffect(() => {
-    setMapBounds(bound);
-  }, [])
+  const [mapBounds, setMapBounds] = useState(initialBounds);
 
   useEffect(() => {
     if (selectedItems.length > 0) {
@@ -39,12 +30,14 @@ export const MapView = () => {
         new LatLngBounds(coordinates[0], coordinates[0])
       );
       setMapBounds(bounds);
+    } else {
+      //setMapBounds(initialBounds); // Resetea los limites cuando no hay items seleccionados
     }
   }, [selectedItems]);
 
-  function ChangeView({ center }) {
+  function ChangeView({ bounds }) {
     const map = useMap();
-    map.setView(center);
+    map.fitBounds(bounds); // ajusta el zoom para que se vean todos los lugares
     return null;
   }
 
@@ -55,7 +48,7 @@ export const MapView = () => {
       <MapContainer
         bounds={mapBounds}
       >
-        <ChangeView center={mapBounds.getCenter()} />
+        <ChangeView bounds={mapBounds} />
         <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
