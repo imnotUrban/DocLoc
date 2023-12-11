@@ -1,9 +1,12 @@
 import { ArrowLeftIcon, ArrowRightIcon, MinusIcon } from '@chakra-ui/icons'
-import {  Box ,Tr,Th,Table,TableCaption,TableContainer,Text, Thead, Tbody, Td, Tfoot, Checkbox, Grid, Select, GridItem, Button, CircularProgress, ButtonGroup, Center, ColorModeContext, Wrap} from '@chakra-ui/react'
+import {  Box ,Tr,Th,Table,TableCaption,TableContainer,Text, Thead, Tbody, Td, Tfoot, Checkbox, Grid, Select, GridItem, Button, CircularProgress, ButtonGroup, Center, ColorModeContext, Wrap,
+  Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalCloseButton,} from '@chakra-ui/react'
 import { getNews } from '../services/apiService'
 import React, {  useEffect, useState } from 'react'
 import { useSelectedItems } from '../context/SelectedItemsContext'
 import '../styles/table.css'
+import { useSelectedItems } from '../context/SelectedItemsContext';
+import { LatLngTuple, LatLngBounds } from 'leaflet';
 
 export interface locations{
   id: number;
@@ -17,11 +20,9 @@ export interface locations{
   lng : number;
 }
 
-
 export const DataTable: React.FC = () => {  
-  
   const [page, setPages] = useState(1); // Se usa para paginar la página
-  const {selectedItems, setSelectedItems} = useSelectedItems();
+  const {selectedItems, setSelectedItems} = useSelectedItems(); // hook que alimenta el useContext con las noticias seleccionadas que deben mostrarse en el mapa
   const [news, setNews] = useState<locations[]>([]);
   const [loading, setLoading] = useState(true); // Se usa para esperar a que se haga la consulta para que cargue la tabla
   const [category, setCategory] = useState('');
@@ -29,6 +30,14 @@ export const DataTable: React.FC = () => {
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
   const [maxPage, setMaxPage] = useState(0);
+  const [showPopup, setShowPopup] = useState(false); // Se encarga de decidir si se muestra el popup o no
+  const [errorMessage, setErrorMessage] = useState(''); // Se encarga de selecionar el mensaje a mostrar en el popup de acuerdo al error
+
+  const mapCenter: [number, number] = [-39.82209496570248, -73.22759947406944];
+  const margin = 0.05;
+  const corner1: LatLngTuple = [mapCenter[0] + margin, mapCenter[1] + margin];
+  const corner2: LatLngTuple = [mapCenter[0] - margin, mapCenter[1] - margin];
+  const bounds = new LatLngBounds(corner1, corner2);
 
   const handleFromDate = (event) => {
     setFromDate(event.target.value);
@@ -38,33 +47,19 @@ export const DataTable: React.FC = () => {
     setToDate(event.target.value);
   };
 
-
   const nextPage = () => {
-    setPages(page+1);
+    setPages(page + 1);
   }
 
   const prevPage = () => {
-    setPages(page-1);
+    setPages(page - 1);
   }
-
- useEffect(() => {
- 
-   return () => {
-     console.log('Se actualiza el arreglo de puntos en el mapa')
-   }
- }, [selectedItems])
- 
 
  const handleCleanButton = () => {
   setSelectedItems([]);
-
  };
 
  const handleFilterButton = () => {
-  console.log('filtrando con las querys')
-  console.log(toDate)
-  console.log(fromDate)
-  console.log(category)
   setFilterSort(current => !current);
   setPages(1);
  }
@@ -91,19 +86,6 @@ export const DataTable: React.FC = () => {
   }
 };
 
-
-
-
-  useEffect(() => {
-    
-    console.log(selectedItems)
-    return () => {
-      console.log('selectedItems' )
-    }
-  }, [selectedItems])
-  
-
-
   const handleCategoriaChange = (event: React.ChangeEvent<HTMLSelectElement>) =>{
     const categoryId = event.target.id;
     if(categoryId === 'CategorySelect'){
@@ -112,17 +94,35 @@ export const DataTable: React.FC = () => {
     console.log(category);
   }
 
-  const handleDocuments = async (page: number) => {
+  useEffect(()=> {
+    console.log(showPopup);
+  }, showPopup)
 
-    try{
-      const newsData = await getNews(page);
-      setNews(newsData);
-      
-    }catch(error){
-      //Mostrar un popup de error en caso de que no pueda cargar los documentos
-      //TODO
-      console.log('no cargan los docs');
+  const handleDocuments = async (page: number) => {
+    async function fetchNews(){
+      try{
+        setTimeout(async () => {
+          const {status, data} = await getNews(page, fromDate, toDate, category);
+          if(status === 0) {
+            setNews(data.doc);
+            setMaxPage(Math.ceil(data.count/10));
+            setLoading(false);
+            setShowPopup(false);
+          } else {
+            if(status === 1) {
+              setErrorMessage('La solicitud a la API no fue exitosa');
+            } else {
+              setErrorMessage('Error al obtener los documentos');
+            }
+            //Muestra un popup de error en caso de que no pueda cargar los documentos
+            setShowPopup(true);
+          }
+        }, 0)
+      }catch (error){
+        setLoading(false);
+      }
     }
+    fetchNews();
   };
 
 
@@ -130,81 +130,34 @@ export const DataTable: React.FC = () => {
    * Carga inicial de los documentos
    */
   useEffect(() => {   
-    async function fetchNews(){
-      try{
-        setTimeout(async () => {
-          const data = await getNews(page, fromDate,toDate,category);
-          setNews(data.doc);
-          setMaxPage(Math.ceil(data.count/10));
-          setLoading(false);
-        }, )
-      }catch (error){
-        setLoading(false);
-      }
-    }
-    fetchNews();
+    handleDocuments(page);
   }, []);
-  useEffect(() => {   
-    async function fetchNews(){
-      try{
-        setTimeout(async () => {
-          const data = await getNews(page,fromDate,toDate, category);
-          setNews(data.doc);
-          setMaxPage(Math.ceil(data.count/10));
 
-          setLoading(false);
+  useEffect(() => {
+    handleDocuments(page);
+    //setSelectedItems(bounds);
+  }, [filterSort, loading, page]);
 
-        }, )
-      }catch (error){
-        setLoading(false);
-      }
-    }
-    fetchNews();
-  }, [filterSort]);
-  useEffect(() => {   
-    async function fetchNews(){
-      try{
-        setTimeout(async () => {
-          const data = await getNews(page,fromDate,toDate, category);
-          setNews(data.doc);
-          setMaxPage(Math.ceil(data.count/10));
-          console.log(maxPage)
-          setLoading(false);
-
-        }, 0 ) 
-      }catch (error){
-        setLoading(false);
-      }
-    }
-    fetchNews();
-  }, [page]);
-  useEffect(() => {   
-    async function fetchNews(){
-      try{
-        setTimeout(async () => {
-          const data = await getNews(page, fromDate,toDate,category);
-          setNews(data.doc);
-          setMaxPage(Math.ceil(data.count/10));
-          console.log(maxPage)
-          console.log(news)
-          setLoading(false);
-
-        }, ) 
-      }catch (error){
-        setLoading(false);
-      }
-    }
-    fetchNews();
-  }, [loading]);
-
+  const Popup = (
+    <Modal isOpen={showPopup} onClose={() => setShowPopup(false)}>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>Error!</ModalHeader>
+        <ModalCloseButton />
+        <ModalBody>
+          {errorMessage}
+        </ModalBody>
+      </ModalContent>
+    </Modal>
+  );
 
   return (
     <Box>
-        <Text fontSize='2xl' className='TableTitle' fontFamily='Mukta Vaani' fontWeight='400'> 
+        <Text id='TableTitle' fontSize='2xl' className='TableTitle' fontFamily='Mukta Vaani' fontWeight='400'> 
           <MinusIcon color={'#44cfe2'}/>  DOCUMENTOS DISPONIBLES PARA VISUALIZAR 
         </Text>
-        
-        <Grid templateColumns={['repeat(1, 1fr)', 'repeat(2, 1fr)', 'repeat(3, 1fr)', 'repeat(6, 1fr)']} gap={4} py='2%'>
+        {showPopup && Popup}      
+  <Grid templateColumns={['repeat(1, 1fr)', 'repeat(2, 1fr)', 'repeat(3, 1fr)', 'repeat(6, 1fr)']} gap={4} py='2%'>
   <GridItem >
     <Text fontSize='l' fontFamily='Mukta Vaani' fontWeight='400'>Categoría</Text>
     <Select id='CategorySelect' placeholder='Categoría' value={category} onChange={handleCategoriaChange}>
@@ -222,7 +175,7 @@ export const DataTable: React.FC = () => {
     </Select>
   </GridItem>
   <GridItem>
-    <Text fontSize='l' fontFamily='Mukta Vaani' fontWeight='400' >Desde</Text>
+    <Text id='FromDate' fontSize='l' fontFamily='Mukta Vaani' fontWeight='400' >Desde</Text>
     <input
       type="date"
       name="trip-start"
@@ -234,7 +187,7 @@ export const DataTable: React.FC = () => {
   </GridItem>
 
   <GridItem>
-    <Text fontSize='l' fontFamily='Mukta Vaani' fontWeight='400' >Hasta</Text>
+    <Text id='ToDate' fontSize='l' fontFamily='Mukta Vaani' fontWeight='400' >Hasta</Text>
     <input
       type="date"
       name="trip-start"
@@ -246,7 +199,7 @@ export const DataTable: React.FC = () => {
   </GridItem>
 
   <GridItem colSpan={[2, null, null, 1]}>
-    <Button onClick={handleFilterButton} > Filtrar </Button>
+    <Button id='ButtonFilter' onClick={handleFilterButton} > Filtrar </Button>
   </GridItem>
   {/* <GridItem colSpan={[2, null, null, 1]}>
     <Button onClick={handleCleanButton}> Limpiar Mapa </Button>
@@ -281,7 +234,7 @@ export const DataTable: React.FC = () => {
             :
             
             <Tbody>
-              {news.map((item) => (
+              {news.map((item, index) => (
                 <Tr key={item.id}>
                   <Td style={{ whiteSpace: "normal" }} width='10%'>
                     <Checkbox
@@ -289,7 +242,7 @@ export const DataTable: React.FC = () => {
                       onChange={() => handleCheckboxChange(item)}
                         />
                   </Td>
-                  <Td style={{ whiteSpace: "normal" }} width='10%'>{item.category.toUpperCase()}</Td>
+                  <Td id={`CategoryId${index}`} style={{ whiteSpace: "normal" }} width='10%'>{item.category.toUpperCase()}</Td>
                   <Td style={{ whiteSpace: "normal" }} width='10%'>{item.date}</Td>
                   <Td style={{ whiteSpace: "normal" }} width='50%'>{item.title}</Td>
                   <Td style={{ whiteSpace: "normal" }} width='10%'>{item.location}</Td>
@@ -313,7 +266,7 @@ export const DataTable: React.FC = () => {
       <Center>
 
         <ButtonGroup  mt={'3'} >
-          <Button isDisabled= {page===1} leftIcon={<ArrowLeftIcon />} onClick={prevPage}>
+          <Button id='ButtonPrevious' isDisabled= {page===1} leftIcon={<ArrowLeftIcon />} onClick={prevPage}>
             Anterior
           </Button>
           <Center w='40px' h='40px'  _dark={{color:'white'}}>
@@ -321,7 +274,7 @@ export const DataTable: React.FC = () => {
               {page}
             </Box>
           </Center>
-          <Button  isDisabled={page === maxPage}  rightIcon={<ArrowRightIcon />} onClick={nextPage} >
+          <Button id='ButtonNext' isDisabled={page === maxPage}  rightIcon={<ArrowRightIcon />} onClick={nextPage} >
             Siguiente
           </Button>
         </ButtonGroup>

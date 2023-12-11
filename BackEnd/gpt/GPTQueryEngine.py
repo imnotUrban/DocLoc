@@ -5,6 +5,14 @@ from dotenv import load_dotenv
 load_dotenv(dotenv_path="../.env")
 
 openai.api_key = "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"
+prompt = '''
+    Extract information from a location following the format 'Street, City, Region, Country' (e.g., Plaza de Mayo, Buenos Aires, Argentina; Paseo de la Reforma, Mexico City, Mexico).
+    The extracted information should be in Spanish.
+    Create a JSON with the following fields: location and summary.
+    Absolutely do not include non-valid locations. Only include geographically valid and precise locations. Exclude temporal, non-terrestrial, non-spatial, individuals, companies, organizations, fictional locations. Exclude general terms like 'Hotel', 'Hospital', 'Carretera', 'Autopista' and exclude vague locations like 'tv shows' or 'radio station'.
+    The summary should relate to the relevant event at the location and be brief. Remember, the location represents a real place or region.
+'''
+
 class GPTQueryEngine:
     def __init__(self):
         pass
@@ -12,13 +20,7 @@ class GPTQueryEngine:
         return f"""{new}"""
     def __getSystem(self):
         #TODO #2 pasar a archivo de config
-        return '''
-    Extract information from a location following the format 'Street, City, Region, Country' (e.g., Plaza de Mayo, Buenos Aires, Argentina; Paseo de la Reforma, Mexico City, Mexico).
-    The extracted information should be in Spanish.
-    Create a JSON with the following fields: location and summary.
-    Absolutely do not include non-valid locations. Only include geographically valid and precise locations. Exclude temporal, non-terrestrial, non-spatial, individuals, companies, organizations, fictional locations. Exclude general terms like 'Hotel', 'Hospital', 'Carretera', 'Autopista' and exclude vague locations like 'tv shows' or 'radio station'.
-    The summary should relate to the relevant event at the location and be brief. Remember, the location represents a real place or region.
-'''
+        return prompt
     def __getMessages(self,new: str) -> list:
         return [
             {"role": "system", "content": self.__getSystem()},

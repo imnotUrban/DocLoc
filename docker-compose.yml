@@ -29,5 +29,6 @@ services:
     restart: always
     depends_on:
       - mariadb-service
+      - api-service
     ports:
       - "5008:5008"
