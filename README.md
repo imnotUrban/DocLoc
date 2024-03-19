@@ -92,5 +92,19 @@ Si necesitas una base de datos MySQL en un contenedor Docker, puedes utilizar el
 docker run -d --rm --name mysqldocLoc -e MYSQL_ROOT_PASSWORD=5123123123 -e MYSQL_DATABASE=storedb -p 3308:3308 mariadb
 ```
 
+### Documentaciòn DocLoc
+
+## Codigo
+
+## Sprint
+
+## Casos de prueba
+
+
+
+
+
+
+
 ¡Disfruta utilizando DocLoc y su entorno Dockerizado!
 
