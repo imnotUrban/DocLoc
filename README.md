@@ -144,7 +144,7 @@ print("fecha:", resultado[0]["fecha"])
 
 ## **Documentación**
 
-[Diagrama de Arquitectura](https://github.com/imnotUrban/DocLoc/blob/prod/Arquitectura_DocLoc.pdf)
-[Manual de despliegue](https://github.com/imnotUrban/DocLoc/blob/prod/Manual_de_despliegue.pdf)
-[Documentación del Backend](https://github.com/imnotUrban/DocLoc/blob/prod/documentacion_Back.pdf)
+[Diagrama de Arquitectura](https://github.com/imnotUrban/DocLoc/blob/prod/Arquitectura_DocLoc.pdf)  
+[Manual de despliegue](https://github.com/imnotUrban/DocLoc/blob/prod/Manual_de_despliegue.pdf)  
+[Documentación del Backend](https://github.com/imnotUrban/DocLoc/blob/prod/documentacion_Back.pdf)  
 
