@@ -1,10 +1,9 @@
-import os
 import json
 import openai
 from dotenv import load_dotenv
 load_dotenv(dotenv_path="../.env")
 
-openai.api_key = "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"
+openai.api_key = "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"
 prompt = '''
     Extract information from a location following the format 'Street, City, Region, Country' (e.g., Plaza de Mayo, Buenos Aires, Argentina; Paseo de la Reforma, Mexico City, Mexico).
     The extracted information should be in Spanish.
