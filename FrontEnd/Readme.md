@@ -1,11 +1,22 @@
--> Cree el template con 
-```
-npm create vite@latest docLoc --template react-ts
+#### Para levantar el frontend
+
+Primero, debe entrar a la carpeta del proyecto
 
 ```
+cd /docLocFront
 
-Si eres nuevo, pone: 
+```
 
-cd docLoc
+Instalar los paquetes de npm
+
+```
 npm install
+
+```
+
+inicializar el frontend
+
+```
 npm run dev
+
+```
