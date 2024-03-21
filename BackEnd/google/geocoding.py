@@ -5,15 +5,11 @@ from models.geocache import geocache_table
 from schemas.geocache import CacheDocument
 from geopy.geocoders import Nominatim
 
-
 import json
 from dotenv import load_dotenv
-import googlemaps
 from dataclasses import dataclass
 
-# load_dotenv(dotenv_path="../.env")
-# key = os.getenv("API_GEOCODING")
-# gmaps = googlemaps.Client(key=key)
+
 geolocator = Nominatim(user_agent="DocLoc")
 
 @dataclass
