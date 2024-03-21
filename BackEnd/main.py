@@ -7,8 +7,7 @@ from schemas.document import Document
 app = FastAPI()
 
 origins = [
-    "http://completoschile.online",
-    "https://completoschile.online",
+    "*", # x mientras 
 ]
 
 app.add_middleware(
