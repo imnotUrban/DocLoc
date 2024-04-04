@@ -2,9 +2,10 @@ import os
 import json
 import openai
 from dotenv import load_dotenv
-load_dotenv(dotenv_path="../.env")
+load_dotenv(dotenv_path=".env")
 
-openai.api_key = "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"
+openai.api_key  = os.getenv("OPENAI")
+
 class GPTQueryEngine:
     def __init__(self):
         pass
