@@ -1,6 +1,6 @@
 export async function getNews(page: number = 1, fromDate: string = '', toDate: string = '', category: string = '') {
   try {
-    let url = `http://localhost:5001/api/query?page=${page}`; // llevar a .env pronto...
+    let url = `http://localhost:8000/api/query?page=${page}`; // llevar a .env pronto...
 
     if (category !== '') {
       url += `&cat=${category}`;
