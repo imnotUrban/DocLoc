@@ -3,17 +3,11 @@ from models.geocache import geocache_table
 from pydantic import BaseModel
 
 class CacheDocument(BaseModel):
-    location_id: int
+    location_id: int | None = None
     location: str
-    lat: str
-    lng: str
+    lat: float | None = None
+    lng: float | None = None
     
-    def __init__(self, location_id=None, location=None, lat=None, lng=None):
-        self.location_id = location_id
-        self.location = location
-        self.lat = lat
-        self.lng = lng
-
     def saveCache(self):
         newDocument = {"location": self.location, "lat": self.lat, "lng": self.lng}
         try:

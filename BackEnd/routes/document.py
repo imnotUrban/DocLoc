@@ -26,7 +26,6 @@ async def create_documents(document: List[Document]):
         GPTResult = queryEngine.query(doc.text)
         doc.updateSummary(GPTResult["data"]["summary"])
         doc.updateDocState(1) # Se obtuvo resumen y ubicación
-
         geoResult = geoloc.getCoordinates(GPTResult["data"])
         if geoResult['lat'] != " ":
             doc.updateDocLocLatLng(geoResult['location'], geoResult['lat'], geoResult['lng'])

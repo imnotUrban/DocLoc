@@ -1,29 +1,21 @@
-import os
 from datetime import datetime
-from config.db import conn
-from models.geocache import geocache_table
 from schemas.geocache import CacheDocument
 from geopy.geocoders import Nominatim
 
-import json
-from dotenv import load_dotenv
-from dataclasses import dataclass
-
-
 geolocator = Nominatim(user_agent="DocLoc")
 
-@dataclass
 class Geocoding:
     coordinates = []
     
     def make_doc(self, location, lat, lng):
         return { "date": str(datetime.now()), "location": location, "lat": lat, "lng": lng}
 
-    # Obtiene lat y lng del documento entrante. # TODO:(máx 10)
-    def getCoordinates(self, document) -> json:
-        location = document['location']
-        cached_location = CacheDocument(location=location).checkInCache()
-        if cached_location is None:
+    def getCoordinates(self, document):
+        print(document)
+        location: str = document['location']
+        cached_location = CacheDocument(location = location) #! Se cae a pedazos
+        print(cached_location)
+        if cached_location.checkInCache() is None:
             try: 
                 # geocode_result = gmaps.geocode(location) # Google maps
                 geocode = geolocator.geocode(location)
