@@ -19,4 +19,4 @@ cd BackEnd
 pytest
 ```
 
-Esto ejecutará todas las pruebas en la carpeta BackEnd y mostrará los resultados en la consola.
+Esto ejecutará todas las pruebas en la carpeta BackEnd (test_gpt.py y test_rendimiento.py) y mostrará los resultados en la consola.
