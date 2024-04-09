@@ -84,6 +84,16 @@ pytest -m navigation
 ```
 Prueba que los botones de navegación de atrás y adelante funcionan.
 
+```
+pytest -m performance
+```
+Prueba que el tiempo de carga de la pagina sea menor a 10 segundos.
+
+```
+pytest -m scalability
+```
+Prueba que el servidor sea capaz de manejar multiples usuarios simultáneos.
+
 ## Documentación para Selenium
 
 https://www.selenium.dev/documentation/

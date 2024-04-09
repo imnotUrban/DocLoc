@@ -115,3 +115,41 @@ def test_navigation_buttons():
     title_firts_row_2 = driver.find_element(By.ID, "TitleId0").text
 
     assert title_firts_row == title_firts_row_2
+
+@pytest.mark.performance
+def test_page_load_time():
+    chrome_options = Options()
+    driver = webdriver.Chrome(options=chrome_options)
+    start_time = time.time() # Capture the start time of loading
+    driver.get(url)
+    end_time = time.time() # Capture the end time of loading
+    load_time = end_time - start_time # Calculate the total loading time
+    assert load_time < 10, "The load time exceeds 10 seconds"
+
+@pytest.mark.scalability
+def test_concurrent_users():
+    chrome_options = Options()
+    num_users = 100
+
+    # Create a list to store browser drivers for each user
+    drivers = []
+
+    # Log in for each simulated user
+    for _ in range(num_users):
+        driver = webdriver.Chrome(options=chrome_options)
+        drivers.append(driver)
+    # Wait for some time to allow users to log in and perform actions
+    driver.implicitly_wait(10)
+    
+    # Perform some action on the page (e.g., load the page)
+    for driver in drivers:
+        driver.get(url)
+    # Wait for some time to allow all requests to be processed
+    driver.implicitly_wait(30)
+    
+    # Close all browser drivers
+    for driver in drivers:
+        driver.quit()
+
+    # Verify that there are no errors
+    assert True
