@@ -65,7 +65,7 @@ def test_filter_date():
     driver.implicitly_wait(10)
 
     date_to = "01-01-2019"
-    date_from = "31-12-2022"
+    date_from = "31-12-2023"
 
     input_to = driver.find_element(By.ID, "FromDate")
     input_to.send_keys(date_to)
@@ -79,16 +79,20 @@ def test_filter_date():
         .perform()
     driver.implicitly_wait(10)
     
-    first_row = driver.find_element(By.ID, "DateId0")
-    second_row = driver.find_element(By.ID, "DateId1")
+    # Find elements from the first to the tenth
+    dates = []
+    for i in range(10):
+        date_id = f"DateId{i}"
+        date_element = driver.find_element(By.ID, date_id)
+        dates.append(datetime.strptime(date_element.text, "%Y-%m-%d"))
 
+    # Convert date text to datetime objects
     to_date = datetime.strptime(date_to, "%d-%m-%Y")
     from_date = datetime.strptime(date_from, "%d-%m-%Y")
-    firts_date = datetime.strptime(first_row.text, "%Y-%m-%d")
-    second_date = datetime.strptime(second_row.text, "%Y-%m-%d")
 
-    assert to_date <= firts_date and from_date >= firts_date and \
-      to_date <= second_date and from_date >= second_date
+    # Check if dates are within the expected range
+    for date in dates:
+        assert to_date <= date <= from_date
 
 @pytest.mark.navigation
 def test_navigation_buttons():
